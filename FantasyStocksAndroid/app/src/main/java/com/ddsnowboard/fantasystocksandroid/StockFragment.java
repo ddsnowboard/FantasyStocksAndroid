@@ -14,6 +14,8 @@ import com.google.gson.Gson;
 import com.jameswk2.FantasyStocksAPI.AbbreviatedStock;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
+import java.util.ArrayList;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -24,8 +26,10 @@ public class StockFragment extends Fragment {
     public static final String TAG = "StockFragment";
     public static final String STOCKS = "stocks";
 
+    MyStockRecyclerViewAdapter adapter;
+
     OnListFragmentInteractionListener listener;
-    Stock[] stocks;
+    public static ArrayList<Stock> stocks = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -41,7 +45,8 @@ public class StockFragment extends Fragment {
         if (getArguments() != null) {
             Gson gson = new Gson();
             Log.e(TAG, getArguments().getString(STOCKS));
-            stocks = gson.fromJson(getArguments().getString(STOCKS), AbbreviatedStock[].class);
+            for(Stock s : gson.fromJson(getArguments().getString(STOCKS), AbbreviatedStock[].class))
+                stocks.add(s);
         }
         else
             Log.d(TAG, "Empty arguments");
@@ -57,7 +62,8 @@ public class StockFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new MyStockRecyclerViewAdapter(stocks, listener));
+            adapter = new MyStockRecyclerViewAdapter(stocks, listener);
+            recyclerView.setAdapter(adapter);
         }
         return view;
     }
@@ -91,6 +97,6 @@ public class StockFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(Stock stock);
+        void onListFragmentInteraction(Object o);
     }
 }

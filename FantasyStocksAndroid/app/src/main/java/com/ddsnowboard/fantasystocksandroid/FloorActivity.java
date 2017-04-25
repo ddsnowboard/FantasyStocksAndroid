@@ -11,16 +11,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetStocksTask;
 import com.google.gson.Gson;
+import com.jameswk2.FantasyStocksAPI.AbbreviatedPlayer;
 import com.jameswk2.FantasyStocksAPI.AbbreviatedStock;
 import com.jameswk2.FantasyStocksAPI.Floor;
 import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /*
  This is really confusing me. I have no idea what is going on or how all these pieces fit together.
@@ -46,7 +48,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
     ArrayList<Stock> stockArray = new ArrayList<>();
 
-    Player[] playerArray;
+    ArrayList<Player> playerArray = new ArrayList<>();
 
     FloorActivity.PagerAdapter pagerAdapter;
     ViewPager pager;
@@ -89,7 +91,6 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             for(Stock stock : s)
                 stockArray.add(stock);
             progress.hide();
-            pagerAdapter.notifyDataSetChanged();
         });
         task.setFloor(f);
         progress.show();
@@ -101,9 +102,8 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         task.setCallback(s -> {
             stockArray.clear();
             for(Stock stock : s)
-                stockArray.add(stock);
+                StockFragment.stocks.add(stock);
             progress.hide();
-            pagerAdapter.notifyDataSetChanged();
         });
         task.setIndex(idx);
         progress.show();
@@ -118,8 +118,9 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
     }
 
     @Override
-    public void onListFragmentInteraction(Stock stock) {
+    public void onListFragmentInteraction(Object o) {
         // Make a new trade with that stock
+        Toast.makeText(this, o.toString(), Toast.LENGTH_LONG).show();
     }
 
     class PagerAdapter extends FragmentPagerAdapter {
@@ -141,26 +142,71 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
                 Bundle bundle = new Bundle();
                 Gson gson = new Gson();
                 Log.d(TAG, "stocks is " + stocks.toString());
-                **********
-                // It might have something to do with the fact that I'm serializing this so it's not
-                // actually the same arraylist...
-                String jsonString = gson.toJson(stocks.toArray(new Stock[0]), AbbreviatedStock[].class);
+                Stock[] dummyStocks = new Stock[]{new AbbreviatedStock(),
+                        new AbbreviatedStock(),
+                        new AbbreviatedStock()};
+                try {
+                    Field nameField = AbbreviatedStock.class.getDeclaredField("symbol");
+                    nameField.setAccessible(true);
+                    Field priceField = AbbreviatedStock.class.getDeclaredField("price");
+                    priceField.setAccessible(true);
+
+
+
+                    nameField.set(dummyStocks[0], "AAPL");
+                    priceField.set(dummyStocks[0], 1.23);
+
+                    nameField.set(dummyStocks[1], "VZW");
+                    priceField.set(dummyStocks[1], 2.23);
+
+                    nameField.set(dummyStocks[2], "GOOG");
+                    priceField.set(dummyStocks[2], 3.23);
+                }
+                catch (NoSuchFieldException | IllegalAccessException e) { throw new RuntimeException(e.toString());}
+
+                String jsonString = gson.toJson(dummyStocks, AbbreviatedStock[].class);
+                // TODO: Make this actually work
+                // String jsonString = gson.toJson(stocks.toArray(new Stock[0]), AbbreviatedStock[].class);
                 Log.d(TAG, "JsonString is " + jsonString);
                 bundle.putString(StockFragment.STOCKS, jsonString);
                 stocksFragment.setArguments(bundle);
-                FloorActivity.this.stockFragment = stocksFragment;
                 return stocksFragment;
             } else if (position == PLAYERS_PAGE) {
                 PlayerFragment fragment = new PlayerFragment();
+                Bundle bundle = new Bundle();
+                Gson gson = new Gson();
+                Log.d(TAG, "players is " + playerArray.toString());
+                Player[] dummyPlayers = new Player[]{new AbbreviatedPlayer(),
+                        new AbbreviatedPlayer(),
+                        new AbbreviatedPlayer()};
+                try {
+                    // Field usernameField = AbbreviatedPlayer.class.getDeclaredField("username");
+                    // usernameField.setAccessible(true);
+                    Field pointField = AbbreviatedPlayer.class.getDeclaredField("points");
+                    pointField.setAccessible(true);
+
+
+
+                    // usernameField.set(dummyPlayers[0], "Ned Schnebly");
+                    pointField.setInt(dummyPlayers[0], 500);
+
+                    // usernameField.set(dummyPlayers[1], "Dewey Finn");
+                    pointField.setInt(dummyPlayers[1], 213);
+
+                    // usernameField.set(dummyPlayers[2], "Summer Hathaway");
+                    pointField.setInt(dummyPlayers[2], 123);
+                }
+                catch (NoSuchFieldException | IllegalAccessException e) { throw new RuntimeException(e.toString());}
+
+                String jsonString = gson.toJson(dummyPlayers, AbbreviatedPlayer[].class);
+                // TODO: Make this actually work
+                Log.d(TAG, "JsonString is " + jsonString);
+                bundle.putString(PlayerFragment.PLAYERS, jsonString);
+                fragment.setArguments(bundle);
                 return fragment;
             } else {
                 throw new RuntimeException("Something strange happened");
             }
-        }
-
-        public void setStocks(ArrayList<Stock> stocks) {
-            this.stocks.clear();
-            this.stocks.addAll(stocks);
         }
 
         @Override

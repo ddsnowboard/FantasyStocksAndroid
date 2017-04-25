@@ -7,21 +7,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ddsnowboard.fantasystocksandroid.StockFragment.OnListFragmentInteractionListener;
+import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
 import java.util.ArrayList;
 
+/**
+ * Created by ddsnowboard on 4/25/17.
+ */
 
-public class MyStockRecyclerViewAdapter extends RecyclerView.Adapter<MyStockRecyclerViewAdapter.ViewHolder> {
-    public static final String TAG = MyStockRecyclerViewAdapter.class.getSimpleName();
+public class PlayerRecyclerAdapter extends RecyclerView.Adapter<PlayerRecyclerAdapter.ViewHolder> {
+    public static final String TAG = PlayerRecyclerAdapter.class.getSimpleName();
 
-    private ArrayList<Stock> stocks;
-    private final OnListFragmentInteractionListener mListener;
+    private ArrayList<Player> players;
+    private final StockFragment.OnListFragmentInteractionListener mListener;
 
-    public MyStockRecyclerViewAdapter(ArrayList<Stock> stocks, OnListFragmentInteractionListener listener) {
-        if (stocks != null)
-            this.stocks = stocks;
+    public PlayerRecyclerAdapter(ArrayList<Player> player, StockFragment.OnListFragmentInteractionListener listener) {
+        if (player != null)
+            this.players = player;
         mListener = listener;
     }
 
@@ -34,8 +37,8 @@ public class MyStockRecyclerViewAdapter extends RecyclerView.Adapter<MyStockRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.stock = stocks.get(position);
-        holder.bind(holder.stock);
+        holder.player = players.get(position);
+        holder.bind(holder.player);
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,7 +46,7 @@ public class MyStockRecyclerViewAdapter extends RecyclerView.Adapter<MyStockRecy
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.stock);
+                    mListener.onListFragmentInteraction(holder.player);
                 }
             }
         });
@@ -51,27 +54,27 @@ public class MyStockRecyclerViewAdapter extends RecyclerView.Adapter<MyStockRecy
 
     @Override
     public int getItemCount() {
-        return stocks.size();
+        return players.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         ConstraintLayout parent;
         TextView name;
-        TextView price;
-        Stock stock;
+        TextView points;
+        Player player;
 
         public ViewHolder(ConstraintLayout v) {
             super(v);
             parent = v;
             name = (TextView) v.findViewById(R.id.name);
-            price = (TextView) v.findViewById(R.id.price);
+            points = (TextView) v.findViewById(R.id.price);
         }
 
-        public void bind(Stock s) {
-            stock = s;
-            name.setText(s.getSymbol());
-            price.setText(String.valueOf(s.getPrice()));
+        public void bind(Player p) {
+            player = p;
+            name.setText("Getting usernames is complicated...");
+            points.setText(String.valueOf(p.getPoints()));
         }
     }
 }

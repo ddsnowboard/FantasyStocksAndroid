@@ -1,6 +1,6 @@
 FantasyStocks for Android
-By jameswk2
 ======================
+By jameswk2
 
 FantasyStocks is a game where players get into groups (herein termed "floors") and pick stocks in an attempt to pick better stocks than their fellow players. In effect, it is a hybrid of stock market simulators (although it's worth noting that the prices are real) and fantasy sports. The stock market simulator element is hopefully obvious. The fantasy sports element is embodied in the fact that only one share of each stock exists on any given floor at a time. The only way to get that stock is to trade for it with whoever owns it. This could be another player, which would mean that getting the stock would require convincing said other player to trade for it, or it could belong to the floor itself (ie, no one), in which case the stock is effectively free. 
 

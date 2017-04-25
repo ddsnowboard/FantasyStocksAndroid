@@ -1,0 +1,23 @@
+FantasyStocks for Android
+By jameswk2
+======================
+
+FantasyStocks is a game where players get into groups (herein termed "floors") and pick stocks in an attempt to pick better stocks than their fellow players. In effect, it is a hybrid of stock market simulators (although it's worth noting that the prices are real) and fantasy sports. The stock market simulator element is hopefully obvious. The fantasy sports element is embodied in the fact that only one share of each stock exists on any given floor at a time. The only way to get that stock is to trade for it with whoever owns it. This could be another player, which would mean that getting the stock would require convincing said other player to trade for it, or it could belong to the floor itself (ie, no one), in which case the stock is effectively free. 
+
+Winning the game means getting the most points. In an effort to make the game more interesting and drive more risky play, points will be calculated based not only on how well a stock does but also on how well that stock has done previously, such that winning a risky bet is worth far more than winning a safe bet. 
+
+When the user first opens the app for the first time, there will be a login screen with a box for a username and password, and two buttons: one that says "Register," and one that says "Log in." The user can type in a username and a password and click on either button. If they click on the "Register" button, they will be taken to the "Join floor" page to join a floor. If they click "Log in," they will go to the "Floors" page.
+
+The "Join floor" page is a list of floors. Each list item will show the name of the floor, who owns it, and its permissiveness. At the top of the list, before any of the floors, will be a button that says "Private floor...". If the user clicks on that, they will be shown a scren that just has a text box labelled "Floor id" and a "Join" button. There, they can put in the id of a private floor, and they will join it. All the other buttons on the "Join floor" page will make the user join the selected public floor.
+
+The floor screen will show the information from one floor that the player is on. There will be two tabs at the top of the screen: one that will show the players on the floor, and one that will show the stocks on the floor. There will be a slide-out menu on the left side that will show all the available floors and a button to join a new floor. If the button to join a new floor is clicked, the user will be taken to the same "Join floor" page from above. If another floor is clicked, the floor page will change to show the new floor.
+
+If the user clicks on a stock, the stock trade screen will appear. It will be presented in a similar fashion to a wizard. First, it will ask the user what stock they want from the player (whose name will be pre-populated from whatever they clicked on to get to this screen). If they clicked on a stock on the floor page, then that stock will also be automatically added to the list. At the end of the list, there will be a button to add another stock. This will open a new activity to pick the stock. It should be a list of all the stocks availble (ie, all the stocks that the user owns) with a search bar. When a stock is picked from there, the user is returned to the list of stocks and the stock they just picked is added. Floating at the bottom of this page is a "next" button, which takes them to a similar page, but for their own stocks. If they clicked on a stock they themeselves own, it will be here, along with the same "add stock" button from before. The "next" button will be replaced by a "finish" button. If the user goes back from this page, the stocks they chose will be kept and they will be returned to the previous page. If the user clicks the finish button without having added anything to either list, they will get a message saying that they have to add at least one stock. Otherwise, they will be returned to the floor page. 
+
+From the floor page, if the user clicks on another user, they will see the user page for that user. This will show all the floors that user is on, along with some profile information about them.
+
+If I have time, there will also be pages to create a new floor and perhaps other things. Otherwise, the users will only be able to do these from the website.
+
+The novel Android feature that I'll be using is Firebase Cloud Messaging (https://firebase.google.com/docs/cloud-messaging/), which I'll use to send push notifications to a user whenever they get a trade request.
+
+User interaction will be based on the game. Since the game is multiplayer, users interact by default. This will be accomplished using my Django backend running Postgres on a Heroku server.

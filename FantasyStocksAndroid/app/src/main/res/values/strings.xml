@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">FantasyStocksAndroid</string>
+    <string name="usernameHint">Username</string>
+    <string name="passwordHint">Password</string>
+    <string name="login">Log in</string>
+    <string name="register">Register</string>
+    <string name="loginMessage">Login or Sign up</string>
+    <string name="title_activity_floor">FloorActivity</string>
+    <string name="loadingText">Consulting with server...</string>
+    <string name="preferences">preferencesFile</string>
+    <string name="password">password</string>
+    <string name="username">username</string>
+    <string name="badPassword">That username or password must be wrong</string>
+</resources>

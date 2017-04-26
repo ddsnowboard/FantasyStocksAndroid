@@ -82,6 +82,7 @@ public class GetStocksTask extends AsyncTask<Void, Void, Stock[]> {
 
     @Override
     protected void onPostExecute(Stock[] stocks) {
+        if(callback != null)
         callback.accept(stocks);
     }
 }

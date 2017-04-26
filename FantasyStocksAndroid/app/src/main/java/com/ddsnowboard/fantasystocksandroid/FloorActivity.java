@@ -10,13 +10,18 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetStocksTask;
 import com.google.gson.Gson;
+import com.jameswk2.FantasyStocksAPI.AbbreviatedFloor;
 import com.jameswk2.FantasyStocksAPI.AbbreviatedPlayer;
 import com.jameswk2.FantasyStocksAPI.AbbreviatedStock;
+import com.jameswk2.FantasyStocksAPI.AbbreviatedUser;
 import com.jameswk2.FantasyStocksAPI.Floor;
 import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
@@ -42,6 +47,8 @@ on 167. Either way, something's fucky I think.
 public class FloorActivity extends FragmentActivity implements StockFragment.OnListFragmentInteractionListener {
     public static final String TAG = "FloorActivity";
 
+    ListView drawer;
+
     StockFragment stockFragment;
     FloatingActionButton fab;
     ProgressDialog progress;
@@ -63,6 +70,31 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             startActivity(intent);
             finish();
         }
+
+        drawer = (ListView) findViewById(R.id.drawer);
+        // This needs to be replaced with real floors, but I need the caching stuff for that
+        ArrayList<Floor> dummyFloors = new ArrayList<>();
+        Field name;
+        try {
+            name = AbbreviatedFloor.class.getDeclaredField("name");
+            name.setAccessible(true);
+        }
+        catch (NoSuchFieldException e){
+            throw new RuntimeException(e.toString());
+        }
+
+        for(int i = 1; i <= 3; i++) {
+            AbbreviatedFloor currFloor = new AbbreviatedFloor();
+            try {
+                name.set(currFloor, String.format("Floor number %d", i));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e.toString());
+            }
+            dummyFloors.add(currFloor);
+        }
+        Log.d(TAG, dummyFloors.toString());
+        FloorListAdapter floorListAdapter = new FloorListAdapter(this, dummyFloors);
+        drawer.setAdapter(floorListAdapter);
 
         progress = new ProgressDialog(this);
         progress.setTitle(R.string.loadingText);
@@ -120,7 +152,14 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
     @Override
     public void onListFragmentInteraction(Object o) {
         // Make a new trade with that stock
-        Toast.makeText(this, o.toString(), Toast.LENGTH_LONG).show();
+        if(o instanceof Stock) {
+            Stock s = (Stock) o;
+            Intent intent = new Intent(this, FirstLevelTrade.class);
+            // This is also going to need the caching
+            intent.putExtra(FirstLevelTrade.USER, "{\"username\": \"Aaron Burr\"}");
+            intent.putExtra(FirstLevelTrade.STOCK, "{\"symbol\": \"AAPL\"}");
+            startActivity(intent);
+        }
     }
 
     class PagerAdapter extends FragmentPagerAdapter {

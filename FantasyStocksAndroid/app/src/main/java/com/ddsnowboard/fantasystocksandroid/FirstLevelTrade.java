@@ -26,7 +26,7 @@ public class FirstLevelTrade extends TradeActivity {
         Gson gson = new Gson();
         User user = gson.fromJson(bundle.getStringExtra(USER), AbbreviatedUser.class);
         Stock stock = gson.fromJson(bundle.getStringExtra(STOCK), AbbreviatedStock.class);
-        setText("What stocks do you want to give to " + user.getUsername());
+        setText("What stocks do you want to give to " + user.getUsername()+"?");
         addStock(stock);
 
         fab.setOnClickListener(new View.OnClickListener() {

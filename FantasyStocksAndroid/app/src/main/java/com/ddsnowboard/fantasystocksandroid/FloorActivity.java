@@ -10,9 +10,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,10 +20,11 @@ import com.google.gson.Gson;
 import com.jameswk2.FantasyStocksAPI.AbbreviatedFloor;
 import com.jameswk2.FantasyStocksAPI.AbbreviatedPlayer;
 import com.jameswk2.FantasyStocksAPI.AbbreviatedStock;
-import com.jameswk2.FantasyStocksAPI.AbbreviatedUser;
 import com.jameswk2.FantasyStocksAPI.Floor;
+import com.jameswk2.FantasyStocksAPI.FullFloor;
 import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
+import com.jameswk2.FantasyStocksAPI.User;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,6 +46,9 @@ on 167. Either way, something's fucky I think.
 
 public class FloorActivity extends FragmentActivity implements StockFragment.OnListFragmentInteractionListener {
     public static final String TAG = "FloorActivity";
+    public static final String FLOOR = "floor";
+    public static final String FLOORS = "floors";
+    public static final int GET_NEW_FLOOR = 1;
 
     ListView drawer;
 
@@ -68,10 +71,26 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         if (!prefs.contains(getString(R.string.username))) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
-            finish();
         }
 
         drawer = (ListView) findViewById(R.id.drawer);
+        findViewById(R.id.joinFloor).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // This will need to be changed too
+                final int NUM_DUMMY_FLOORS = 10;
+                Intent intent = new Intent(FloorActivity.this, JoinFloor.class);
+                Floor[] floors = new Floor[NUM_DUMMY_FLOORS];
+                for(int i = 1; i <= NUM_DUMMY_FLOORS; i++) {
+                    floors[i - 1] = new DummyFloor(String.format("Floor%d", i));
+                }
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(floors, DummyFloor[].class);
+                intent.putExtra(FLOORS, jsonString);
+                startActivityForResult(intent, GET_NEW_FLOOR);
+            }
+        });
+
         // This needs to be replaced with real floors, but I need the caching stuff for that
         ArrayList<Floor> dummyFloors = new ArrayList<>();
         Field name;
@@ -251,6 +270,63 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         @Override
         public int getCount() {
             return 2;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == GET_NEW_FLOOR) {
+            if(resultCode == RESULT_OK) {
+                Toast.makeText(this, "Joined a new floor", Toast.LENGTH_LONG).show();
+                // Actually join the floor...
+            }
+        }
+    }
+
+    class DummyFloor implements Floor {
+        private String name;
+        public DummyFloor(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public int getId() {
+            return 0;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public Stock[] getStocks() {
+            return new Stock[0];
+        }
+
+        @Override
+        public FullFloor.Permissiveness getPermissiveness() {
+            return null;
+        }
+
+        @Override
+        public User getOwner() {
+            return null;
+        }
+
+        @Override
+        public Player getFloorPlayer() {
+            return null;
+        }
+
+        @Override
+        public boolean isPublic() {
+            return false;
+        }
+
+        @Override
+        public int getNumStocks() {
+            return 0;
         }
     }
 }

@@ -25,7 +25,8 @@
         <activity android:name=".FirstLevelTrade" />
         <activity android:name=".TradeActivity" />
         <activity android:name=".StockPicker" />
-        <activity android:name=".SecondLevelTrade"></activity>
+        <activity android:name=".SecondLevelTrade" />
+        <activity android:name=".JoinFloor"></activity>
     </application>
 
 </manifest>

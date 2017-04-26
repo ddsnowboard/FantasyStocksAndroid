@@ -47,7 +47,11 @@ public class StockPicker extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                adapter.setArray(stocks.stream().filter(s -> s.contains(editable.toString())).collect(Collectors.toList()));
+                ArrayList<String> newList = new ArrayList<>();
+                for(String s : stocks)
+                    if(s.contains(editable.toString()))
+                        newList.add(s);
+                adapter.setArray(newList);
             }
         });
     }

@@ -1,12 +1,9 @@
 package com.ddsnowboard.fantasystocksandroid.AsyncTasks;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
-import com.ddsnowboard.fantasystocksandroid.R;
 import com.ddsnowboard.fantasystocksandroid.Utilities;
-import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 import com.jameswk2.FantasyStocksAPI.Floor;
 import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
@@ -51,7 +48,8 @@ public class GetStocksTask extends AsyncTask<IntSupplier, Void, Stock[]> {
 
     @Override
     protected void onPostExecute(Stock[] stocks) {
-        if(callback != null)
-        callback.accept(stocks);
+        if (callback != null) {
+            callback.accept(stocks);
+        }
     }
 }

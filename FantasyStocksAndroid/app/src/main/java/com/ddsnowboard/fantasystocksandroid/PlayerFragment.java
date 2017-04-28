@@ -17,6 +17,7 @@ import com.jameswk2.FantasyStocksAPI.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Created by ddsnowboard on 4/24/17.
@@ -39,7 +40,7 @@ public class PlayerFragment extends Fragment {
         if (getArguments() != null) {
             int playerId = getArguments().getInt(FloorActivity.PLAYER_ID);
             GetPlayersTask task = new GetPlayersTask(getContext(), players -> {
-                Arrays.stream(players)
+                Arrays.stream(players).sorted(Comparator.comparingInt(p -> -p.getPoints()))
                         .forEach(p -> this.players.add(p));
                 adapter.notifyDataSetChanged();
             });

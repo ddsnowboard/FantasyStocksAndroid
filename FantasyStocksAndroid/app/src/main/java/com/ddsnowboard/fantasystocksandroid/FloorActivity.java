@@ -10,21 +10,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetStocksTask;
-import com.google.gson.Gson;
-import com.jameswk2.FantasyStocksAPI.AbbreviatedPlayer;
-import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 import com.jameswk2.FantasyStocksAPI.Floor;
 import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class FloorActivity extends FragmentActivity implements StockFragment.OnListFragmentInteractionListener {
     public static final String TAG = "FloorActivity";
@@ -36,14 +29,9 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
     ListView drawer;
 
-    StockFragment stockFragment;
     FloatingActionButton fab;
-    ProgressDialog progress;
 
-    ArrayList<Stock> stockArray = new ArrayList<>();
-
-    ArrayList<Player> playerArray = new ArrayList<>();
-
+    FloorDrawerHandler drawerHandler;
     FloorActivity.PagerAdapter pagerAdapter;
     ViewPager pager;
 
@@ -62,9 +50,8 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         }
 
         // Initialize UI components...
-        progress = new ProgressDialog(this);
-        progress.setTitle(R.string.loadingText);
         drawer = (ListView) findViewById(R.id.drawer);
+        drawerHandler = new FloorDrawerHandler(drawer);
         pagerAdapter = new PagerAdapter(getSupportFragmentManager(), PagerAdapter.UNKNOWN_PLAYER_ID);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(pagerAdapter);
@@ -77,11 +64,6 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             intent.putExtra(USER_ID, 42);
             startActivityForResult(intent, GET_NEW_FLOOR);
         });
-
-
-        bindToFloor(0);
-
-
         fab = (FloatingActionButton) findViewById(R.id.fab);
     }
 
@@ -93,16 +75,6 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
     private void bindToFloor(int idx) {
         // TODO: Fix these to send broadcasts to the fragments to change themselves.
-        GetStocksTask task = new GetStocksTask(this);
-        Consumer<Stock[]> consumer = (s) -> {
-            stockArray.clear();
-            for (Stock stock : s)
-                StockFragment.stocks.add(stock);
-            progress.hide();
-        };
-        task.setCallback(consumer);
-        progress.show();
-        task.execute(() -> Utilities.login(this).getPlayers()[0].getFloor().getId());
     }
 
 

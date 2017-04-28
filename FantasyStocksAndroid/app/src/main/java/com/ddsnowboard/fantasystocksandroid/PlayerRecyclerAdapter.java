@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jameswk2.FantasyStocksAPI.Player;
-import com.jameswk2.FantasyStocksAPI.Stock;
 
 import java.util.ArrayList;
 
@@ -73,7 +72,7 @@ public class PlayerRecyclerAdapter extends RecyclerView.Adapter<PlayerRecyclerAd
 
         public void bind(Player p) {
             player = p;
-            name.setText("Getting usernames is complicated...");
+            name.setText(p.getUser().getUsername());
             points.setText(String.valueOf(p.getPoints()));
         }
     }

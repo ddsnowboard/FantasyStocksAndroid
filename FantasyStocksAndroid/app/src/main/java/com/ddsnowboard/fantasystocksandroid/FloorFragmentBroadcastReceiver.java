@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  */
 
 public class FloorFragmentBroadcastReceiver extends BroadcastReceiver {
-    public static final String GET_FLOOR = "getafloor";
+    public static final String LOAD_NEW_FLOOR = "getafloor";
     public static final String FLOOR_ID = "floorIdNumber";
     private final Consumer<Floor> callback;
 
@@ -24,8 +24,8 @@ public class FloorFragmentBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction().equals(GET_FLOOR)) {
-            int id = intent.getIntExtra(GET_FLOOR, -1);
+        if(intent.getAction().equals(LOAD_NEW_FLOOR)) {
+            int id = intent.getIntExtra(LOAD_NEW_FLOOR, -1);
             if(id == -1)
                 throw new RuntimeException("Something bad happened");
             new GetFloorTask(context, f -> callback.accept(f)).execute(() -> id);

@@ -15,12 +15,9 @@ import java.util.function.Consumer;
 
 public class FloorFragmentBroadcastReceiver extends BroadcastReceiver {
     public static final String GET_FLOOR = "getafloor";
-    public static final String FLOOR_ID = "floorIdNumber"
+    public static final String FLOOR_ID = "floorIdNumber";
     private final Consumer<Floor> callback;
 
-    ***************
-    // Finish implementing this, which might actually be done, and then implement the AsyncTask,
-    // then put this in the floortabactivity thing. We'll see what happens.
     public FloorFragmentBroadcastReceiver(Consumer<Floor> cb) {
         this.callback = cb;
     }
@@ -31,7 +28,7 @@ public class FloorFragmentBroadcastReceiver extends BroadcastReceiver {
             int id = intent.getIntExtra(GET_FLOOR, -1);
             if(id == -1)
                 throw new RuntimeException("Something bad happened");
-            new GetFloorTask(f -> callback.accept(f)).execute(id);
+            new GetFloorTask(context, f -> callback.accept(f)).execute(() -> id);
         }
     }
 }

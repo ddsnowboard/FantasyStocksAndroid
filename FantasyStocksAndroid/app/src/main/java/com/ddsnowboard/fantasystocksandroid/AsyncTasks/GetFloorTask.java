@@ -1,27 +1,43 @@
 package com.ddsnowboard.fantasystocksandroid.AsyncTasks;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.constraint.ConstraintLayout;
 
+import com.ddsnowboard.fantasystocksandroid.Utilities;
 import com.jameswk2.FantasyStocksAPI.Floor;
+import com.jameswk2.FantasyStocksAPI.Player;
+import com.jameswk2.FantasyStocksAPI.User;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.function.IntSupplier;
 
 /**
  * Created by ddsnowboard on 4/27/17.
  */
 
-public class GetFloorTask extends AsyncTask<Integer, Void, Floor> {
+public class GetFloorTask extends AsyncTask<IntSupplier, Void, Floor> {
     private final Consumer<Floor> callback;
+    private Context ctx;
 
-    public GetFloorTask(Consumer<Floor> cb)
-    {
+    public GetFloorTask(Context ctx, Consumer<Floor> cb) {
         this.callback = cb;
+        this.ctx = ctx;
     }
 
     @Override
-    protected Floor doInBackground(Integer... integers) {
-        // Get the floor from the server
+    protected Floor doInBackground(IntSupplier... floorIdGenerators) {
+        // You'll notice, if you're particularly astute, that I'm getting the id of a floor object
+        // only to turn it back into a floor. This is beacuse I want a full Floor object and not an abbreviated one.
+        int floorId = floorIdGenerators[0].getAsInt();
+        if (floorId == -1) {
+            // We should get the first floor that this guy owns
+            User u = Utilities.login(ctx);
+            Player p = u.getPlayers()[0];
+            floorId = p.getFloor().getId();
+        }
+        return Floor.get(floorId);
     }
 
     @Override

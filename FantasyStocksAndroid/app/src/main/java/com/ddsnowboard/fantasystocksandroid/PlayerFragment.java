@@ -10,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
-import com.jameswk2.FantasyStocksAPI.AbbreviatedPlayer;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetFloorTask;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetPlayersTask;
+import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 import com.jameswk2.FantasyStocksAPI.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by ddsnowboard on 4/24/17.
@@ -24,6 +26,7 @@ public class PlayerFragment extends Fragment {
     public static final String TAG = "PlayerFragment";
     public static final String PLAYERS = "players";
     ArrayList<Player> players = new ArrayList<>();
+    PlayerRecyclerAdapter adapter;
 
     StockFragment.OnListFragmentInteractionListener listener;
 
@@ -31,13 +34,20 @@ public class PlayerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        adapter = new PlayerRecyclerAdapter(players, listener);
+
         if (getArguments() != null) {
-            Gson gson = new Gson();
-            Log.e(TAG, getArguments().getString(PLAYERS));
-            for(Player p : gson.fromJson(getArguments().getString(PLAYERS), AbbreviatedPlayer[].class))
-                players.add(p);
-        }
-        else
+            int playerId = getArguments().getInt(FloorActivity.PLAYER_ID);
+            GetPlayersTask task = new GetPlayersTask(getContext(), players -> {
+                Arrays.stream(players)
+                        .forEach(p -> this.players.add(p));
+                adapter.notifyDataSetChanged();
+            });
+            if (playerId != FloorActivity.PagerAdapter.UNKNOWN_PLAYER_ID)
+                task.execute(() -> Player.get(playerId).getFloor().getId());
+            else
+                task.execute(() -> (-1));
+        } else
             Log.d(TAG, "Empty arguments");
     }
 
@@ -51,7 +61,6 @@ public class PlayerFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            PlayerRecyclerAdapter adapter = new PlayerRecyclerAdapter(players, listener);
             recyclerView.setAdapter(adapter);
         }
         return view;

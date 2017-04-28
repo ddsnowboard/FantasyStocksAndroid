@@ -10,8 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
-import com.jameswk2.FantasyStocksAPI.AbbreviatedStock;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetStocksTask;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
 import java.util.ArrayList;
@@ -41,15 +40,21 @@ public class StockFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adapter = new MyStockRecyclerViewAdapter(stocks, listener);
 
         if (getArguments() != null) {
-            Gson gson = new Gson();
-            Log.e(TAG, getArguments().getString(STOCKS));
-            for(Stock s : gson.fromJson(getArguments().getString(STOCKS), AbbreviatedStock[].class))
-                stocks.add(s);
-        }
-        else
-            Log.d(TAG, "Empty arguments");
+            // The swearing that occurs when your ridiculous plan works...
+            int playerId = getArguments().getInt(FloorActivity.PLAYER_ID);
+            GetStocksTask task = new GetStocksTask(this.getContext());
+
+            task.setCallback(stocks -> {
+                for (Stock s : stocks)
+                    this.stocks.add(s);
+                adapter.notifyDataSetChanged();
+            });
+            task.execute((() -> playerId));
+        } else
+            Log.e(TAG, "Empty arguments");
     }
 
     @Override
@@ -62,7 +67,6 @@ public class StockFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            adapter = new MyStockRecyclerViewAdapter(stocks, listener);
             recyclerView.setAdapter(adapter);
         }
         return view;

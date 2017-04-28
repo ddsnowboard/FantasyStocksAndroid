@@ -27,7 +27,7 @@ public class JoinFloor extends AppCompatActivity {
         setContentView(R.layout.activity_join_floor);
         Gson gson = new Gson();
         Intent intent = getIntent();
-        floors = gson.fromJson(intent.getStringExtra(FloorActivity.FLOORS), FloorActivity.DummyFloor[].class);
+        floors = new Floor[0];
         Log.d(TAG, Arrays.toString(floors));
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

@@ -25,7 +25,6 @@ import java.util.ArrayList;
  */
 public class StockFragment extends Fragment {
     public static final String TAG = "StockFragment";
-    public static final String STOCKS = "stocks";
 
     MyStockRecyclerViewAdapter adapter;
 
@@ -45,7 +44,7 @@ public class StockFragment extends Fragment {
         super.onCreate(savedInstanceState);
         adapter = new MyStockRecyclerViewAdapter(stocks, listener);
 
-        IntentFilter filter = new IntentFilter(FloorFragmentBroadcastReceiver.LOAD_NEW_FLOOR);
+        IntentFilter filter = new IntentFilter(Utilities.LOAD_NEW_FLOOR);
         receiver = new FloorFragmentBroadcastReceiver<>(stocks -> {
             this.stocks.clear();
             for (Stock s : stocks)
@@ -56,8 +55,7 @@ public class StockFragment extends Fragment {
         getContext().registerReceiver(receiver, filter);
 
         if (getArguments() != null) {
-            // The swearing that occurs when your ridiculous plan works...
-            int playerId = getArguments().getInt(FloorActivity.PLAYER_ID);
+            int playerId = getArguments().getInt(Utilities.PLAYER_ID);
             GetStocksTask task = new GetStocksTask(this.getContext(), stocks -> {
                 for (Stock s : stocks)
                     this.stocks.add(s);

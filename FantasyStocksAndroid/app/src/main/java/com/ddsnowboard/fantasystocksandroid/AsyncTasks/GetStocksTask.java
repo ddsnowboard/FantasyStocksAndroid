@@ -1,6 +1,7 @@
 package com.ddsnowboard.fantasystocksandroid.AsyncTasks;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.ddsnowboard.fantasystocksandroid.Utilities;
@@ -35,6 +36,12 @@ public class GetStocksTask extends GetterTask<Stock[]> {
             User u = Utilities.login(ctx);
             Player p = u.getPlayers()[0];
             floorId = p.getFloor().getId();
+
+            // The first (and probably only) time we have to do this,
+            // we have to tell the floating action button the floor we found
+            Intent intent = new Intent(Utilities.FOUND_STARTING_FLOOR);
+            intent.putExtra(Utilities.FLOOR_ID, floorId);
+            ctx.sendBroadcast(intent);
         }
         Stock[] stocks = Floor.get(floorId).getStocks();
         Stream<Stock> st = Arrays.stream(stocks);

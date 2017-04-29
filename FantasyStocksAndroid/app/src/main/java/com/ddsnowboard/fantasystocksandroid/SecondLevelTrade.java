@@ -12,9 +12,6 @@ public class SecondLevelTrade extends TradeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Gson gson = new Gson();
-        User user = gson.fromJson(getIntent().getStringExtra(PLAYER), AbbreviatedUser.class);
-        setText("What stocks do you want from " + user.getUsername());
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -22,6 +19,7 @@ public class SecondLevelTrade extends TradeActivity {
                 stocksToReceive = adapter.getObjects();
                 sendTrade(stocksToSend, stocksToReceive, currentRecipient);
                 currentFirstLevel.finish();
+                PreTradePickPlayer.currentPlayerPicker.finish();
                 finish();
             }
         });

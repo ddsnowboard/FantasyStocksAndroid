@@ -10,13 +10,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 
+import static com.ddsnowboard.fantasystocksandroid.Utilities.FLOOR_ID;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.LOAD_NEW_FLOOR;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
+
 /**
  * Created by ddsnowboard on 4/27/17.
  */
 
 public class FloorFragmentBroadcastReceiver<T extends GetterTask<J>, J> extends BroadcastReceiver {
-    public static final String LOAD_NEW_FLOOR = "getafloor";
-    public static final String FLOOR_ID = "floorIdNumber";
     private final Consumer<J> callback;
     private final Constructor<T> constructor;
 
@@ -28,9 +30,8 @@ public class FloorFragmentBroadcastReceiver<T extends GetterTask<J>, J> extends 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(LOAD_NEW_FLOOR)) {
-            final int BAD_VALUE = -1;
-            int id = intent.getIntExtra(FLOOR_ID, BAD_VALUE);
-            if (id == BAD_VALUE)
+            int id = intent.getIntExtra(FLOOR_ID, UNKNOWN_ID);
+            if (id == UNKNOWN_ID)
                 throw new RuntimeException("Something bad happened");
             try {
                 constructor.newInstance(context, callback).execute(() -> id);

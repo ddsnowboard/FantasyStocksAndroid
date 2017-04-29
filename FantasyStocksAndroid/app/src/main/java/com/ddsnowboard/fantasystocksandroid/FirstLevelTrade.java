@@ -22,11 +22,6 @@ public class FirstLevelTrade extends TradeActivity {
         stocksToSend.clear();
         currentRecipient = new DummyPlayer();
         Intent bundle = getIntent();
-        Gson gson = new Gson();
-        User user = gson.fromJson(bundle.getStringExtra(PLAYER), AbbreviatedUser.class);
-        Stock stock = gson.fromJson(bundle.getStringExtra(STOCK), AbbreviatedStock.class);
-        setText("What stocks do you want to give to " + user.getUsername()+"?");
-        addStock(stock);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,7 +29,7 @@ public class FirstLevelTrade extends TradeActivity {
                 stocksToSend = adapter.getObjects();
                 currentFirstLevel = FirstLevelTrade.this;
                 Intent newIntent = new Intent(FirstLevelTrade.this, SecondLevelTrade.class);
-                newIntent.putExtra(PLAYER, bundle.getStringExtra(PLAYER));
+                // TODO: Put stuff in here
                 startActivity(newIntent);
             }
         });

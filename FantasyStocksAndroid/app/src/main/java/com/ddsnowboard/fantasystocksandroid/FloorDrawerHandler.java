@@ -45,8 +45,8 @@ public class FloorDrawerHandler {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int idx, long l) {
                 masterView.closeDrawers();
-                Intent intent = new Intent(FloorFragmentBroadcastReceiver.LOAD_NEW_FLOOR);
-                intent.putExtra(FloorFragmentBroadcastReceiver.FLOOR_ID, floors.get(idx).getId());
+                Intent intent = new Intent(Utilities.LOAD_NEW_FLOOR);
+                intent.putExtra(Utilities.FLOOR_ID, floors.get(idx).getId());
                 drawer.getContext().sendBroadcast(intent);
             }
         });

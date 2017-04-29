@@ -26,7 +26,6 @@ import java.util.function.Consumer;
 
 public class PlayerFragment extends Fragment {
     public static final String TAG = "PlayerFragment";
-    public static final String PLAYERS = "players";
 
     ArrayList<Player> players = new ArrayList<>();
     PlayerRecyclerAdapter adapter;
@@ -47,16 +46,16 @@ public class PlayerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        IntentFilter filter = new IntentFilter(FloorFragmentBroadcastReceiver.LOAD_NEW_FLOOR);
+        IntentFilter filter = new IntentFilter(Utilities.LOAD_NEW_FLOOR);
         receiver = new FloorFragmentBroadcastReceiver<>(callbackFunction, GetPlayersTask.class);
 
         getContext().registerReceiver(receiver, filter);
         adapter = new PlayerRecyclerAdapter(players, listener);
 
         if (getArguments() != null) {
-            int playerId = getArguments().getInt(FloorActivity.PLAYER_ID);
+            int playerId = getArguments().getInt(Utilities.PLAYER_ID);
             GetPlayersTask task = new GetPlayersTask(getContext(), callbackFunction);
-            if (playerId != FloorActivity.PagerAdapter.UNKNOWN_PLAYER_ID)
+            if (playerId != Utilities.UNKNOWN_ID)
                 task.execute(() -> Player.get(playerId).getFloor().getId());
             else
                 task.execute(() -> (-1));

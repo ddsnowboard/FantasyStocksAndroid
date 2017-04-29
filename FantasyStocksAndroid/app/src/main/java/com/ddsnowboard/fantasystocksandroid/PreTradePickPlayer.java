@@ -19,9 +19,12 @@ import com.jameswk2.FantasyStocksAPI.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.ddsnowboard.fantasystocksandroid.Utilities.FLOOR_ID;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
+
 public class PreTradePickPlayer extends AppCompatActivity {
-    public static final String FLOOR_ID = "floorID";
-    public static final int IMPOSSIBLE_VALUE = -1;
+
+    public static PreTradePickPlayer currentPlayerPicker;
 
     EditText searchBox;
     RecyclerView list;
@@ -31,12 +34,13 @@ public class PreTradePickPlayer extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentPlayerPicker = this;
         setContentView(R.layout.activity_pick_player);
         searchBox = (EditText) findViewById(R.id.searchBox);
         list = (RecyclerView) findViewById(R.id.recyclerView);
 
         Intent intent = getIntent();
-        int floorId = intent.getIntExtra(FLOOR_ID, IMPOSSIBLE_VALUE);
+        int floorId = intent.getIntExtra(FLOOR_ID, UNKNOWN_ID);
         FantasyStocksAPI api = FantasyStocksAPI.getInstance();
         GetPlayersTask task = new GetPlayersTask(this, players -> Arrays.stream(players)
                 .filter(p -> !p.getUser().equals(api.getUser()))
@@ -104,7 +108,8 @@ public class PreTradePickPlayer extends AppCompatActivity {
             name.setText(p.getUser().getUsername());
             holder.setOnClickListener(view -> {
                 Intent intent = new Intent(PreTradePickPlayer.this, FirstLevelTrade.class);
-                // Put the player's id in, and send it off.
+                intent.putExtra(Utilities.PLAYER_ID, p.getId());
+                startActivity(intent);
             });
         }
     }

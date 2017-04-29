@@ -21,12 +21,13 @@ import com.jameswk2.FantasyStocksAPI.Stock;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import static com.ddsnowboard.fantasystocksandroid.Utilities.GET_STOCK_FOR_TRADE;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.STOCK;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.STOCKS;
+
 
 public class TradeActivity extends AppCompatActivity {
-    public static final String PLAYER = "user";
-    public static final int GET_STOCK = 2;
-    public static final String STOCK = "stock";
-    public static final String STOCKS = "stocks";
+
     protected static ArrayList<Stock> stocksToSend = new ArrayList<>();
     protected static ArrayList<Stock> stocksToReceive = new ArrayList<>();
     protected static Player currentRecipient;
@@ -59,7 +60,7 @@ public class TradeActivity extends AppCompatActivity {
                     names.add(s.getSymbol());
                 }
                 intent.putStringArrayListExtra(STOCKS, names);
-                startActivityForResult(intent, GET_STOCK);
+                startActivityForResult(intent, GET_STOCK_FOR_TRADE);
             }
         });
         list.setAdapter(adapter);
@@ -104,7 +105,7 @@ public class TradeActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == GET_STOCK) {
+        if (requestCode == GET_STOCK_FOR_TRADE) {
             if (resultCode == RESULT_OK) {
                 String stockName = data.getStringExtra(STOCK);
                 Toast.makeText(this, String.format("Imagine that %s showed up the list instead of Apple again", stockName),

@@ -11,6 +11,20 @@ import com.jameswk2.FantasyStocksAPI.User;
  */
 
 public class Utilities {
+    public static final String FLOOR_ID = "flooridnumber";
+    public static final String FLOOR = "floor";
+    public static final int GET_NEW_FLOOR = 1;
+    public static final String USER_ID = "UserIdNumber";
+    public static final String PLAYER_ID = "PlayerIDNumber";
+    public static final int UNKNOWN_ID = -1;
+    public static final String LOAD_NEW_FLOOR = "getafloor";
+    public static final String PLAYERS = "players";
+    public static final String STOCK = "stock";
+    public static final String STOCKS = "stocks";
+    public static final int GET_STOCK_FOR_TRADE = 2;
+    public static final String FOUND_STARTING_FLOOR = "foundStartingFloor";
+
+
     public static <T> boolean contains(T[] haystack, T needle) {
         for (T s : haystack)
             if (s.equals(needle))

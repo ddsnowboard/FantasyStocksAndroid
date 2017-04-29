@@ -1,6 +1,9 @@
 package com.ddsnowboard.fantasystocksandroid;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,20 +12,18 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.jameswk2.FantasyStocksAPI.Player;
-import com.jameswk2.FantasyStocksAPI.Stock;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.FLOOR_ID;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.FOUND_STARTING_FLOOR;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.GET_NEW_FLOOR;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.PLAYER_ID;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.USER_ID;
 
 public class FloorActivity extends FragmentActivity implements StockFragment.OnListFragmentInteractionListener {
-    public static final String TAG = "FloorActivity";
-    public static final String FLOOR = "floor";
-    public static final String FLOORS = "floors";
-    public static final int GET_NEW_FLOOR = 1;
-    public static final String USER_ID = "UserIdNumber";
-    public static final String PLAYER_ID = "PlayerIDNumber";
-
     ListView drawer;
 
     FloatingActionButton fab;
@@ -36,6 +37,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_floor);
         SharedPreferences prefs = getSharedPreferences(getString(R.string.preferences), 0);
+
         // TODO: Should this finish() or not? How is this going to get the username back?
         // startActivityForResult()?
         if (!prefs.contains(getString(R.string.username))) {
@@ -48,7 +50,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         // Initialize UI components...
         drawer = (ListView) findViewById(R.id.drawer);
         drawerHandler = new FloorDrawerHandler(drawer);
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), PagerAdapter.UNKNOWN_PLAYER_ID);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), UNKNOWN_ID);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(pagerAdapter);
 
@@ -61,27 +63,18 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             startActivityForResult(intent, GET_NEW_FLOOR);
         });
         fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        IntentFilter filter = new IntentFilter(FOUND_STARTING_FLOOR);
+        BroadcastReceiver receiver = new FloorFoundListener();
+        registerReceiver(receiver, filter);
     }
 
     @Override
     public void onListFragmentInteraction(Object o) {
-        // Make a new trade with that stock
-        if (o instanceof Stock) {
-            Stock s = (Stock) o;
-            Intent intent = new Intent(this, FirstLevelTrade.class);
-            // This is also going to need the caching
-            intent.putExtra(FirstLevelTrade.PLAYER, "This is some text");
-            intent.putExtra(FirstLevelTrade.STOCK, "{\"symbol\": \"AAPL\"}");
-            startActivity(intent);
-        }
-        else if(o instanceof Player) {
-            // Make a trade with this player
-        }
+        // Does nothing
     }
 
     class PagerAdapter extends FragmentPagerAdapter {
-        public static final int UNKNOWN_PLAYER_ID = -1;
-
         final int STOCKS_PAGE = 0;
         final int PLAYERS_PAGE = 1;
 
@@ -101,7 +94,6 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
                 stocksFragment.setArguments(bundle);
                 return stocksFragment;
             } else if (position == PLAYERS_PAGE) {
-                // TODO: Some stuff has to happen here, but that's for later.
                 PlayerFragment fragment = new PlayerFragment();
                 Bundle bundle = new Bundle();
                 bundle.putInt(PLAYER_ID, currentPlayerId);
@@ -114,7 +106,8 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
         @Override
         public int getCount() {
-            return 2;
+            final int NUMBER_OF_CARDS = 2;
+            return NUMBER_OF_CARDS;
         }
     }
 
@@ -124,6 +117,35 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Joined a new floor", Toast.LENGTH_LONG).show();
                 // TODO: Actually join the floor...
+            }
+        }
+    }
+
+    class TradeSequenceCreator implements View.OnClickListener {
+        private int floorId;
+
+        public TradeSequenceCreator(int floorId) {
+            this.floorId = floorId;
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(FloorActivity.this, PreTradePickPlayer.class);
+            intent.putExtra(FLOOR_ID, floorId);
+            startActivity(intent);
+        }
+    }
+
+    class FloorFoundListener extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Utilities.FOUND_STARTING_FLOOR)) {
+                int floorId = intent.getIntExtra(Utilities.FLOOR_ID, Utilities.UNKNOWN_ID);
+                if (floorId == Utilities.UNKNOWN_ID)
+                    throw new RuntimeException("Something bad happened");
+                fab.setOnClickListener(new TradeSequenceCreator(floorId));
+                FloorActivity.this.unregisterReceiver(this);
             }
         }
     }

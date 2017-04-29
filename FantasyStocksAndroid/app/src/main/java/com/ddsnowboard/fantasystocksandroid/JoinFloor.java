@@ -75,7 +75,7 @@ public class JoinFloor extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent output = new Intent();
-                    output.putExtra(FloorActivity.FLOOR, f.getId());
+                    output.putExtra(Utilities.FLOOR_ID, f.getId());
                     setResult(RESULT_OK, output);
                     finish();
                 }

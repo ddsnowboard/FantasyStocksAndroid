@@ -28,7 +28,7 @@ public class StockPicker extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_picker);
-        stocks = getIntent().getStringArrayListExtra(TradeActivity.STOCKS);
+        stocks = getIntent().getStringArrayListExtra(Utilities.STOCKS);
         stockList = (RecyclerView) findViewById(R.id.searchList);
         stockList.setLayoutManager(new LinearLayoutManager(this));
         searchBox = (EditText) findViewById(R.id.searchBox);
@@ -102,7 +102,7 @@ public class StockPicker extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent output = new Intent();
-                    output.putExtra(TradeActivity.STOCK, nameView.getText().toString());
+                    output.putExtra(Utilities.STOCKS, nameView.getText().toString());
                     setResult(RESULT_OK, output);
                     finish();
                 }

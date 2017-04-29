@@ -16,4 +16,5 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="joinFloor">Join a floor</string>
     <string name="joinFloorPrompt">Choose a floor to join</string>
+    <string name="searchHint">Search...</string>
 </resources>

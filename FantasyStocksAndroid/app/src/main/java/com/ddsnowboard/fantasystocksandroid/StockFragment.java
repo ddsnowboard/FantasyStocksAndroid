@@ -1,6 +1,8 @@
 package com.ddsnowboard.fantasystocksandroid;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +30,8 @@ public class StockFragment extends Fragment {
     MyStockRecyclerViewAdapter adapter;
 
     OnListFragmentInteractionListener listener;
-    public static ArrayList<Stock> stocks = new ArrayList<>();
+    public ArrayList<Stock> stocks = new ArrayList<>();
+    private BroadcastReceiver receiver;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -42,16 +45,24 @@ public class StockFragment extends Fragment {
         super.onCreate(savedInstanceState);
         adapter = new MyStockRecyclerViewAdapter(stocks, listener);
 
+        IntentFilter filter = new IntentFilter(FloorFragmentBroadcastReceiver.LOAD_NEW_FLOOR);
+        receiver = new FloorFragmentBroadcastReceiver<>(stocks -> {
+            this.stocks.clear();
+            for (Stock s : stocks)
+                this.stocks.add(s);
+            adapter.notifyDataSetChanged();
+        }, GetStocksTask.class);
+
+        getContext().registerReceiver(receiver, filter);
+
         if (getArguments() != null) {
             // The swearing that occurs when your ridiculous plan works...
             int playerId = getArguments().getInt(FloorActivity.PLAYER_ID);
-            GetStocksTask task = new GetStocksTask(this.getContext());
-
-            task.setCallback(stocks -> {
+            GetStocksTask task = new GetStocksTask(this.getContext(), stocks -> {
                 for (Stock s : stocks)
                     this.stocks.add(s);
                 adapter.notifyDataSetChanged();
-            });
+            } );
             task.execute((() -> playerId));
         } else
             Log.e(TAG, "Empty arguments");
@@ -87,6 +98,8 @@ public class StockFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        if(receiver != null)
+            getContext().unregisterReceiver(receiver);
         listener = null;
     }
 

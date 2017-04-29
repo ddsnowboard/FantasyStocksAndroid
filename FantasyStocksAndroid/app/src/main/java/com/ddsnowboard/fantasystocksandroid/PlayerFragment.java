@@ -1,6 +1,8 @@
 package com.ddsnowboard.fantasystocksandroid;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,14 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetFloorTask;
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetPlayersTask;
-import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 import com.jameswk2.FantasyStocksAPI.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.function.Consumer;
 
 /**
  * Created by ddsnowboard on 4/24/17.
@@ -26,24 +27,35 @@ import java.util.Comparator;
 public class PlayerFragment extends Fragment {
     public static final String TAG = "PlayerFragment";
     public static final String PLAYERS = "players";
+
     ArrayList<Player> players = new ArrayList<>();
     PlayerRecyclerAdapter adapter;
 
+    private BroadcastReceiver receiver;
+
     StockFragment.OnListFragmentInteractionListener listener;
+
+    private final Consumer<Player[]> callbackFunction = players -> {
+        this.players.clear();
+        Arrays.stream(players).sorted(Comparator.comparingInt(p -> -p.getPoints()))
+                .filter(p -> !p.isFloor())
+                .forEach(p -> this.players.add(p));
+        adapter.notifyDataSetChanged();
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        IntentFilter filter = new IntentFilter(FloorFragmentBroadcastReceiver.LOAD_NEW_FLOOR);
+        receiver = new FloorFragmentBroadcastReceiver<>(callbackFunction, GetPlayersTask.class);
+
+        getContext().registerReceiver(receiver, filter);
         adapter = new PlayerRecyclerAdapter(players, listener);
 
         if (getArguments() != null) {
             int playerId = getArguments().getInt(FloorActivity.PLAYER_ID);
-            GetPlayersTask task = new GetPlayersTask(getContext(), players -> {
-                Arrays.stream(players).sorted(Comparator.comparingInt(p -> -p.getPoints()))
-                        .forEach(p -> this.players.add(p));
-                adapter.notifyDataSetChanged();
-            });
+            GetPlayersTask task = new GetPlayersTask(getContext(), callbackFunction);
             if (playerId != FloorActivity.PagerAdapter.UNKNOWN_PLAYER_ID)
                 task.execute(() -> Player.get(playerId).getFloor().getId());
             else
@@ -81,6 +93,8 @@ public class PlayerFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        if (receiver != null)
+            getContext().unregisterReceiver(receiver);
         listener = null;
     }
 }

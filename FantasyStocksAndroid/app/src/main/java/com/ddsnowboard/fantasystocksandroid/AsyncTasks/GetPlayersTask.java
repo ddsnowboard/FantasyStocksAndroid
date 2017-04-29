@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * Created by ddsnowboard on 4/28/17.
  */
 
-public class GetPlayersTask extends AsyncTask<IntSupplier, Void, Player[]> {
+public class GetPlayersTask extends GetterTask<Player[]> {
     Context context;
 
     Consumer<Player[]> callback;

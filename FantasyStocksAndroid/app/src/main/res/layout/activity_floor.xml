@@ -16,37 +16,38 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="@dimen/fab_margin"
-                app:srcCompat="@drawable/ic_add_black_24dp" />
 
         </android.support.v4.view.ViewPager>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:srcCompat="@drawable/sideways_arrows" />
     </android.support.design.widget.CoordinatorLayout>
 
 
     <LinearLayout
         android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:layout_gravity="left"
+        android:layout_gravity="right"
         android:background="#ffffff"
         android:orientation="vertical">
 
         <ListView
             android:id="@+id/drawer"
             android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"></ListView>
+            android:layout_gravity="right"
+            android:layout_height="wrap_content">
+        </ListView>
 
         <TextView
             android:id="@+id/joinFloor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_gravity="left"
+            android:layout_gravity="right"
             android:text="@string/joinFloor"
             android:textSize="12pt" />
     </LinearLayout>

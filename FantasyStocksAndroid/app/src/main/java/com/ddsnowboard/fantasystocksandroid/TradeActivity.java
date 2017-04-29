@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 
 public class TradeActivity extends AppCompatActivity {
-    public static final String USER = "user";
+    public static final String PLAYER = "user";
     public static final int GET_STOCK = 2;
     public static final String STOCK = "stock";
     public static final String STOCKS = "stocks";

@@ -1,7 +1,6 @@
 package com.ddsnowboard.fantasystocksandroid;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
@@ -24,7 +23,7 @@ public class FirstLevelTrade extends TradeActivity {
         currentRecipient = new DummyPlayer();
         Intent bundle = getIntent();
         Gson gson = new Gson();
-        User user = gson.fromJson(bundle.getStringExtra(USER), AbbreviatedUser.class);
+        User user = gson.fromJson(bundle.getStringExtra(PLAYER), AbbreviatedUser.class);
         Stock stock = gson.fromJson(bundle.getStringExtra(STOCK), AbbreviatedStock.class);
         setText("What stocks do you want to give to " + user.getUsername()+"?");
         addStock(stock);
@@ -35,7 +34,7 @@ public class FirstLevelTrade extends TradeActivity {
                 stocksToSend = adapter.getObjects();
                 currentFirstLevel = FirstLevelTrade.this;
                 Intent newIntent = new Intent(FirstLevelTrade.this, SecondLevelTrade.class);
-                newIntent.putExtra(USER, bundle.getStringExtra(USER));
+                newIntent.putExtra(PLAYER, bundle.getStringExtra(PLAYER));
                 startActivity(newIntent);
             }
         });

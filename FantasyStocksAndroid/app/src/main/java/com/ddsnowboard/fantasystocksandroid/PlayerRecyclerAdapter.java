@@ -66,8 +66,8 @@ public class PlayerRecyclerAdapter extends RecyclerView.Adapter<PlayerRecyclerAd
         public ViewHolder(ConstraintLayout v) {
             super(v);
             parent = v;
-            name = (TextView) v.findViewById(R.id.name);
-            points = (TextView) v.findViewById(R.id.price);
+            name = (TextView) v.findViewById(R.id.left);
+            points = (TextView) v.findViewById(R.id.right);
         }
 
         public void bind(Player p) {

@@ -18,15 +18,12 @@ import java.util.stream.Stream;
  * Created by ddsnowboard on 4/24/17.
  */
 
-public class GetStocksTask extends AsyncTask<IntSupplier, Void, Stock[]> {
-    Context ctx;
-    Consumer<Stock[]> callback;
+public class GetStocksTask extends GetterTask<Stock[]> {
+    private Context ctx;
+    private Consumer<Stock[]> callback;
 
-    public GetStocksTask(Context ctx) {
+    public GetStocksTask(Context ctx, Consumer<Stock[]> cb) {
         this.ctx = ctx;
-    }
-
-    public void setCallback(Consumer<Stock[]> cb) {
         this.callback = cb;
     }
 

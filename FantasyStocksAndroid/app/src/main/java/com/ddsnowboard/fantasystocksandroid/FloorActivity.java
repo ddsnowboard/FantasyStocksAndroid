@@ -1,6 +1,5 @@
 package com.ddsnowboard.fantasystocksandroid;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,11 +12,8 @@ import android.support.v4.view.ViewPager;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.jameswk2.FantasyStocksAPI.Floor;
 import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
-
-import java.util.ArrayList;
 
 public class FloorActivity extends FragmentActivity implements StockFragment.OnListFragmentInteractionListener {
     public static final String TAG = "FloorActivity";
@@ -67,17 +63,6 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         fab = (FloatingActionButton) findViewById(R.id.fab);
     }
 
-
-    private void bindToFloor(Floor f) {
-        // TODO: Fix these to send broadcasts to the fragments to change themselves.
-        bindToFloor(f.getId());
-    }
-
-    private void bindToFloor(int idx) {
-        // TODO: Fix these to send broadcasts to the fragments to change themselves.
-    }
-
-
     @Override
     public void onListFragmentInteraction(Object o) {
         // Make a new trade with that stock
@@ -85,9 +70,12 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             Stock s = (Stock) o;
             Intent intent = new Intent(this, FirstLevelTrade.class);
             // This is also going to need the caching
-            intent.putExtra(FirstLevelTrade.USER, "{\"username\": \"Aaron Burr\"}");
+            intent.putExtra(FirstLevelTrade.PLAYER, "This is some text");
             intent.putExtra(FirstLevelTrade.STOCK, "{\"symbol\": \"AAPL\"}");
             startActivity(intent);
+        }
+        else if(o instanceof Player) {
+            // Make a trade with this player
         }
     }
 
@@ -109,10 +97,6 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             if (position == STOCKS_PAGE) {
                 StockFragment stocksFragment = new StockFragment();
                 Bundle bundle = new Bundle();
-
-                // TODO: Make this actually work
-                // Ok I think this is good. Now I just need to go into the StocksFragment class
-                // and teach it how to take this id number and read the stocks from it.
                 bundle.putInt(PLAYER_ID, currentPlayerId);
                 stocksFragment.setArguments(bundle);
                 return stocksFragment;

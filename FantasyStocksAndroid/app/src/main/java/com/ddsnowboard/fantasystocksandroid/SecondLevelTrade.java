@@ -13,7 +13,7 @@ public class SecondLevelTrade extends TradeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Gson gson = new Gson();
-        User user = gson.fromJson(getIntent().getStringExtra(USER), AbbreviatedUser.class);
+        User user = gson.fromJson(getIntent().getStringExtra(PLAYER), AbbreviatedUser.class);
         setText("What stocks do you want from " + user.getUsername());
 
         fab.setOnClickListener(new View.OnClickListener() {

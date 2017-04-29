@@ -64,8 +64,8 @@ public class MyStockRecyclerViewAdapter extends RecyclerView.Adapter<MyStockRecy
         public ViewHolder(ConstraintLayout v) {
             super(v);
             parent = v;
-            name = (TextView) v.findViewById(R.id.name);
-            price = (TextView) v.findViewById(R.id.price);
+            name = (TextView) v.findViewById(R.id.left);
+            price = (TextView) v.findViewById(R.id.right);
         }
 
         public void bind(Stock s) {

@@ -65,7 +65,7 @@ public class JoinFloor extends AppCompatActivity {
         public ViewHolder(View itemView) {
             super(itemView);
             parent = itemView;
-            name = (TextView) itemView.findViewById(R.id.name);
+            name = (TextView) itemView.findViewById(R.id.left);
         }
 
         public void bind(Floor f) {

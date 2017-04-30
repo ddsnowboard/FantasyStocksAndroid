@@ -63,7 +63,7 @@ public class StockFragment extends Fragment {
             } );
             task.execute((() -> playerId));
         } else
-            Log.e(TAG, "Empty arguments");
+            throw new RuntimeException("Empty arguments");
     }
 
     @Override

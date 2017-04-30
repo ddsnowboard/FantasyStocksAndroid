@@ -2,7 +2,7 @@ package com.ddsnowboard.fantasystocksandroid.AsyncTasks;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.util.Log;
 
 import com.ddsnowboard.fantasystocksandroid.Utilities;
 import com.jameswk2.FantasyStocksAPI.Floor;
@@ -20,12 +20,10 @@ import java.util.stream.Stream;
  */
 
 public class GetStocksTask extends GetterTask<Stock[]> {
-    private Context ctx;
-    private Consumer<Stock[]> callback;
+    public static final String TAG = "GetStocksTask";
 
     public GetStocksTask(Context ctx, Consumer<Stock[]> cb) {
-        this.ctx = ctx;
-        this.callback = cb;
+        super(ctx, cb);
     }
 
     @Override
@@ -50,10 +48,4 @@ public class GetStocksTask extends GetterTask<Stock[]> {
         return retval;
     }
 
-    @Override
-    protected void onPostExecute(Stock[] stocks) {
-        if (callback != null) {
-            callback.accept(stocks);
-        }
-    }
 }

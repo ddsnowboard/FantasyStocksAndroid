@@ -1,7 +1,7 @@
 package com.ddsnowboard.fantasystocksandroid.AsyncTasks;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.util.Log;
 
 import com.ddsnowboard.fantasystocksandroid.Utilities;
 import com.jameswk2.FantasyStocksAPI.Floor;
@@ -18,13 +18,9 @@ import java.util.stream.Stream;
  */
 
 public class GetPlayersTask extends GetterTask<Player[]> {
-    Context context;
-
-    Consumer<Player[]> callback;
-
+    private static final String TAG = "GetPlayersTask";
     public GetPlayersTask(Context ctx, Consumer<Player[]> cb) {
-        context = ctx;
-        callback = cb;
+        super(ctx, cb);
     }
 
     @Override
@@ -32,7 +28,7 @@ public class GetPlayersTask extends GetterTask<Player[]> {
         int floorId = floorIdGenerators[0].getAsInt();
         if (floorId == -1) {
             // We should get the first floor that this guy owns
-            User u = Utilities.login(context);
+            User u = Utilities.login(ctx);
             Player p = u.getPlayers()[0];
             floorId = p.getFloor().getId();
         }
@@ -43,9 +39,4 @@ public class GetPlayersTask extends GetterTask<Player[]> {
         return players.toArray(Player[]::new);
     }
 
-    @Override
-    protected void onPostExecute(Player[] players) {
-        super.onPostExecute(players);
-        callback.accept(players);
-    }
 }

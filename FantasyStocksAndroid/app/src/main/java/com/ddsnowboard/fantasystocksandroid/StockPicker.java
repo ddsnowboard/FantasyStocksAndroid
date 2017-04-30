@@ -7,65 +7,88 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetPlayersStocks;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetterTask;
+import com.jameswk2.FantasyStocksAPI.Stock;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class StockPicker extends AppCompatActivity {
+    public static final String TAG = StockPicker.class.getSimpleName();
+
     RecyclerView stockList;
     EditText searchBox;
-    ArrayList<String> stocks;
+    ArrayList<Stock> allStocks = new ArrayList<>();
     Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_picker);
-        stocks = getIntent().getStringArrayListExtra(Utilities.STOCKS);
+        int playerId = getIntent().getIntExtra(Utilities.PLAYER_ID, Utilities.UNKNOWN_ID);
+        if (playerId == Utilities.UNKNOWN_ID)
+             throw new RuntimeException("You forgot to give me a playerId");
+
         stockList = (RecyclerView) findViewById(R.id.searchList);
         stockList.setLayoutManager(new LinearLayoutManager(this));
         searchBox = (EditText) findViewById(R.id.searchBox);
-        adapter = new Adapter(stocks);
+        adapter = new Adapter();
+        adapter.setArray(allStocks);
         stockList.setAdapter(adapter);
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                ArrayList<String> newList = new ArrayList<>();
-                for(String s : stocks)
-                    if(s.contains(editable.toString()))
-                        newList.add(s);
-                adapter.setArray(newList);
+                if (editable.length() == 0) {
+                    Log.d(TAG, allStocks.toString());
+                    ArrayList<Stock> currentStocks = new ArrayList<>(allStocks);
+                    adapter.setArray(currentStocks);
+                } else {
+                    String searchText = editable.toString();
+                    ArrayList<Stock> newList = new ArrayList<>();
+                    for (Stock s : allStocks)
+                        if (s.getCompanyName().toUpperCase().contains(searchText.toUpperCase()) || s.getSymbol().toUpperCase().contains(searchText.toUpperCase()))
+                            newList.add(s);
+                    adapter.setArray(newList);
+                }
             }
         });
+
+        GetterTask<Stock[]> task = new GetPlayersStocks(this,
+                stocks -> {
+                    Arrays.stream(stocks).forEach(allStocks::add);
+                    adapter.notifyDataSetChanged();
+                });
+        task.execute(() -> playerId);
     }
 
     class Adapter extends RecyclerView.Adapter<StockPicker.StockSearchHolder> {
-        List<String> stocks;
-        public Adapter(ArrayList<String> stocks) {
-            this.stocks = stocks;
+        List<Stock> stocks = new ArrayList<>();
+
+        public Adapter() {
+
         }
 
         @Override
         public StockSearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.stock_search_holder, parent, false);
+                    inflate(R.layout.stock_viewer, parent, false);
             return new StockSearchHolder(view);
         }
 
@@ -79,7 +102,7 @@ public class StockPicker extends AppCompatActivity {
             return stocks.size();
         }
 
-        public void setArray(List<String> newArray) {
+        public void setArray(List<Stock> newArray) {
             this.stocks = newArray;
             notifyDataSetChanged();
         }
@@ -87,22 +110,24 @@ public class StockPicker extends AppCompatActivity {
 
     class StockSearchHolder extends RecyclerView.ViewHolder {
         View parent;
+        TextView priceView;
         TextView nameView;
 
         public StockSearchHolder(View itemView) {
             super(itemView);
             parent = itemView;
-            nameView = (TextView) itemView.findViewById(R.id.stockHolder);
+            nameView = (TextView) itemView.findViewById(R.id.left);
+            priceView = (TextView) itemView.findViewById(R.id.right);
         }
 
-        public void bind(String s) {
-            nameView.setText(s);
-            parent.setOnClickListener(null);
+        public void bind(Stock s) {
+            nameView.setText(s.getSymbol());
+            priceView.setText(String.valueOf(s.getChange()));
             parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent output = new Intent();
-                    output.putExtra(Utilities.STOCKS, nameView.getText().toString());
+                    output.putExtra(Utilities.STOCK_ID, s.getId());
                     setResult(RESULT_OK, output);
                     finish();
                 }

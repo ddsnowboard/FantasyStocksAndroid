@@ -5,33 +5,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jameswk2.FantasyStocksAPI.AbbreviatedStock;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetStockTask;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetterTask;
 import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import static com.ddsnowboard.fantasystocksandroid.Utilities.GET_STOCK_FOR_TRADE;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.STOCK;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.STOCKS;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
 
 
 public class TradeActivity extends AppCompatActivity {
 
-    protected static ArrayList<Stock> stocksToSend = new ArrayList<>();
-    protected static ArrayList<Stock> stocksToReceive = new ArrayList<>();
-    protected static Player currentRecipient;
-    protected static FirstLevelTrade currentFirstLevel;
+    private int playerId = Utilities.UNKNOWN_ID;
 
     TextView text;
     ListView list;
@@ -53,13 +52,13 @@ public class TradeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // You're going to have to show this dynamically too...
-                Stock[] dummies = getDummyStocks();
                 Intent intent = new Intent(TradeActivity.this, StockPicker.class);
-                ArrayList<String> names = new ArrayList<>();
-                for (Stock s : dummies) {
-                    names.add(s.getSymbol());
+                if (playerId == UNKNOWN_ID) {
+                    // throw new RuntimeException("You need to set the playerId!");
+                    Toast.makeText(TradeActivity.this, "Please wait...", Toast.LENGTH_LONG).show();
+                    return;
                 }
-                intent.putStringArrayListExtra(STOCKS, names);
+                intent.putExtra(Utilities.PLAYER_ID, playerId);
                 startActivityForResult(intent, GET_STOCK_FOR_TRADE);
             }
         });
@@ -76,12 +75,19 @@ public class TradeActivity extends AppCompatActivity {
         text.setText(s);
     }
 
+    public void setText(@StringRes int res) {
+        setText(getString(res));
+    }
+
     public void addStock(Stock s) {
         adapter.add(s);
     }
 
-    class Adapter extends ArrayAdapter<Stock> {
+    public ArrayList<Stock> getStocks() {
+        return adapter.getObjects();
+    }
 
+    class Adapter extends ArrayAdapter<Stock> {
         @LayoutRes
         private static final int LAYOUT = R.layout.floor_list_container;
 
@@ -96,10 +102,24 @@ public class TradeActivity extends AppCompatActivity {
             }
             return retval;
         }
+
+        @Override
+        public View getView(int position, View view, ViewGroup parent) {
+            if(view == null)
+                view = LayoutInflater.from(getContext()).inflate(R.layout.stock_viewer,
+                        parent, false);
+            TextView nameView = (TextView) view.findViewById(R.id.left);
+            TextView priceView = (TextView) view.findViewById(R.id.right);
+            nameView.setText(getItem(position).getSymbol());
+            priceView.setText(String.valueOf(getItem(position).getPrice()));
+            return view;
+        }
     }
 
-    protected static void sendTrade(ArrayList<Stock> stocksToReceive, ArrayList<Stock> stocksToSend,
-                                    Player currentRecipient) {
+    protected static void sendTrade(int[] stocksToReceive, int[] stocksToSend,
+                                    int currentRecipientId) {
+        // Go to the static singleton things I have that hold every element of the trade, put
+        // them all together, and call the server
         // Send this trade...
     }
 
@@ -107,38 +127,26 @@ public class TradeActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == GET_STOCK_FOR_TRADE) {
             if (resultCode == RESULT_OK) {
-                String stockName = data.getStringExtra(STOCK);
-                Toast.makeText(this, String.format("Imagine that %s showed up the list instead of Apple again", stockName),
-                        Toast.LENGTH_LONG).show();
-                Stock stock = getDummyStocks()[0];
-                adapter.add(stock);
+                int stockId = data.getIntExtra(Utilities.STOCK_ID, UNKNOWN_ID);
+                if(adapter.getObjects().stream().mapToInt(Stock::getId).anyMatch(i ->  i == stockId)) {
+                    Toast.makeText(this, "You can't add the same stock twice!", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    GetterTask<Stock> task = new GetStockTask(this, adapter::add);
+                    task.execute(() -> stockId);
+                }
+            }
+            else if(resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Please wait...", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private static Stock[] getDummyStocks() {
+    protected void setPlayer(Player p) {
+        setPlayer(p.getId());
+    }
 
-        Stock[] dummyStocks = new Stock[]{new AbbreviatedStock(),
-                new AbbreviatedStock(),
-                new AbbreviatedStock()};
-        try {
-            Field nameField = AbbreviatedStock.class.getDeclaredField("symbol");
-            nameField.setAccessible(true);
-            Field priceField = AbbreviatedStock.class.getDeclaredField("price");
-            priceField.setAccessible(true);
-
-
-            nameField.set(dummyStocks[0], "AAPL");
-            priceField.set(dummyStocks[0], 1.23);
-
-            nameField.set(dummyStocks[1], "VZW");
-            priceField.set(dummyStocks[1], 2.23);
-
-            nameField.set(dummyStocks[2], "GOOG");
-            priceField.set(dummyStocks[2], 3.23);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e.toString());
-        }
-        return dummyStocks;
+    protected void setPlayer(int playerId) {
+        this.playerId = playerId;
     }
 }

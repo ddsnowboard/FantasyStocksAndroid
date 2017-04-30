@@ -7,12 +7,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetPlayersTask;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
@@ -33,12 +33,10 @@ public class PreTradePickPlayer extends AppCompatActivity {
     RecyclerView list;
     private ArrayList<Player> allPlayers = new ArrayList<>();
     private ArrayList<Player> currentlyShownPlayers = new ArrayList<>();
+    private int playerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ***********
-        // for some reason there are no players showing up in the player picker. I don't know
-        // why not. It might be because it doesn't show floors or something? I need more print statements.
         super.onCreate(savedInstanceState);
         currentPlayerPicker = this;
         setContentView(R.layout.activity_pick_player);
@@ -51,11 +49,16 @@ public class PreTradePickPlayer extends AppCompatActivity {
         Adapter adapter = new Adapter(currentlyShownPlayers);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this));
-        Log.d(TAG, String.valueOf(floorId));
         GetPlayersTask task = new GetPlayersTask(this,
                 players -> {
+                    // 2 = 1 floor + 1 user (the only one)
+                    if (players.length == 2) {
+                        Toast.makeText(PreTradePickPlayer.this, "There is no one to trade with!", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
                     Arrays.stream(players)
                             .filter(p -> !p.getUser().equals(api.getUser()))
+                            .filter(p -> !p.isFloor())
                             .peek(p -> currentlyShownPlayers.add(p))
                             .forEach(p -> allPlayers.add(p));
                     adapter.notifyDataSetChanged();
@@ -114,6 +117,19 @@ public class PreTradePickPlayer extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Utilities.MAKE_TRADE) {
+            if(resultCode == RESULT_OK) {
+                int[] senderStockIds = data.getIntArrayExtra(Utilities.TRADE_STOCKS_FROM_USER);
+                int[] recipientStocks = data.getIntArrayExtra(Utilities.TRADE_STOCKS_TO_GIVE_USER);
+                TradeActivity.sendTrade(senderStockIds, recipientStocks, playerId);
+                finish();
+            }
+        }
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView name;
         View holder;
@@ -123,14 +139,15 @@ public class PreTradePickPlayer extends AppCompatActivity {
             super(itemView);
             holder = itemView;
             name = (TextView) itemView.findViewById(R.id.left);
+            ((TextView) itemView.findViewById(R.id.right)).setText("");
         }
 
         public void bind(Player p) {
-            Log.d(TAG, "Bound " + p.getUser().getUsername());
             name.setText(p.getUser().getUsername());
             holder.setOnClickListener(view -> {
                 Intent intent = new Intent(PreTradePickPlayer.this, FirstLevelTrade.class);
                 intent.putExtra(Utilities.PLAYER_ID, p.getId());
+                playerId = p.getId();
                 startActivity(intent);
             });
         }

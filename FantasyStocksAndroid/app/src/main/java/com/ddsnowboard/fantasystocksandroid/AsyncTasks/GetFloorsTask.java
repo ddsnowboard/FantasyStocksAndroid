@@ -11,23 +11,24 @@ import com.jameswk2.FantasyStocksAPI.User;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.function.IntSupplier;
 
 /**
  * Created by ddsnowboard on 4/28/17.
  */
 
-public class GetFloorsTask extends AsyncTask<Void, Void, Floor[]> {
+public class GetFloorsTask extends GetterTask<Floor[]> {
     public static final String TAG = "GetFloorsTask";
-    Context ctx;
-    Consumer<Floor[]> callback;
 
     public GetFloorsTask(Context ctx, Consumer<Floor[]> cb) {
-        this.ctx = ctx;
-        this.callback = cb;
+        super(ctx, cb);
     }
 
     @Override
-    protected Floor[] doInBackground(Void... voids) {
+    protected Floor[] doInBackground(IntSupplier... voids) {
+        // This one doesn't actually use the int suppliers. You can still use it though.
+        // If I wanted to I could make them optional, using them if they're there and using the
+        // context otherwise.
         User u = Utilities.login(ctx);
         return Arrays.stream(Player.getPlayers())
                 .filter(p -> p.getUser().equals(u))
@@ -35,10 +36,4 @@ public class GetFloorsTask extends AsyncTask<Void, Void, Floor[]> {
                 .toArray(Floor[]::new);
     }
 
-    @Override
-    protected void onPostExecute(Floor[] floors) {
-        if (callback != null) {
-            callback.accept(floors);
-        }
-    }
 }

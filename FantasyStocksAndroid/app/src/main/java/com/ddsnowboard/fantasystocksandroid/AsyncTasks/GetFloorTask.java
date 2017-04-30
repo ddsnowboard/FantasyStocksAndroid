@@ -16,12 +16,9 @@ import java.util.function.IntSupplier;
  */
 
 public class GetFloorTask extends GetterTask<Floor> {
-    private final Consumer<Floor> callback;
-    private Context ctx;
 
     public GetFloorTask(Context ctx, Consumer<Floor> cb) {
-        this.callback = cb;
-        this.ctx = ctx;
+        super(ctx, cb);
     }
 
     @Override
@@ -36,11 +33,5 @@ public class GetFloorTask extends GetterTask<Floor> {
             floorId = p.getFloor().getId();
         }
         return Floor.get(floorId);
-    }
-
-    @Override
-    protected void onPostExecute(Floor floor) {
-        super.onPostExecute(floor);
-        callback.accept(floor);
     }
 }

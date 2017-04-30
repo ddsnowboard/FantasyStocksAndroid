@@ -4,96 +4,50 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.google.gson.Gson;
-import com.jameswk2.FantasyStocksAPI.AbbreviatedStock;
-import com.jameswk2.FantasyStocksAPI.AbbreviatedUser;
-import com.jameswk2.FantasyStocksAPI.Floor;
-import com.jameswk2.FantasyStocksAPI.Player;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetPlayerTask;
 import com.jameswk2.FantasyStocksAPI.Stock;
-import com.jameswk2.FantasyStocksAPI.Trade;
-import com.jameswk2.FantasyStocksAPI.User;
+
+import java.util.ArrayList;
 
 public class FirstLevelTrade extends TradeActivity {
+
+    private ArrayList<Stock> stocks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        stocksToReceive.clear();
-        stocksToSend.clear();
-        currentRecipient = new DummyPlayer();
         Intent bundle = getIntent();
+        int playerId = bundle.getIntExtra(Utilities.PLAYER_ID, Utilities.UNKNOWN_ID);
+        setPlayer(playerId);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                stocksToSend = adapter.getObjects();
-                currentFirstLevel = FirstLevelTrade.this;
                 Intent newIntent = new Intent(FirstLevelTrade.this, SecondLevelTrade.class);
-                // TODO: Put stuff in here
-                startActivity(newIntent);
+                stocks.clear();
+                stocks.addAll(getStocks());
+                newIntent.putExtra(Utilities.PLAYER_ID, playerId);
+                startActivityForResult(newIntent, Utilities.MAKE_TRADE);
             }
         });
+
+        setText(R.string.loading);
+        GetPlayerTask getPlayerTask = new GetPlayerTask(this,
+                player -> setText(String.format("What stocks do you want from %s?", player.getUser().getUsername())));
+        getPlayerTask.execute(() -> playerId);
     }
 
-    class DummyPlayer implements Player {
-        @Override
-        public int getId() {
-            return 0;
-        }
-
-        @Override
-        public User getUser() {
-            return new User() {
-                @Override
-                public int getId() {
-                    return 0;
-                }
-
-                @Override
-                public String getUsername() {
-                    return "A User";
-                }
-
-                @Override
-                public Player[] getPlayers() {
-                    return new Player[]{DummyPlayer.this};
-                }
-            };
-        }
-
-        @Override
-        public Floor getFloor() {
-            return null;
-        }
-
-        @Override
-        public Stock[] getStocks() {
-            return new Stock[0];
-        }
-
-        @Override
-        public int getPoints() {
-            return 0;
-        }
-
-        @Override
-        public boolean isFloor() {
-            return false;
-        }
-
-        @Override
-        public Trade[] getSentTrades() {
-            return new Trade[0];
-        }
-
-        @Override
-        public Trade[] getReceivedTrades() {
-            return new Trade[0];
-        }
-
-        @Override
-        public boolean isFloorOwner() {
-            return false;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Utilities.MAKE_TRADE) {
+            if(resultCode == RESULT_OK) {
+                Intent out = new Intent();
+                out.putExtra(Utilities.TRADE_STOCKS_FROM_USER, stocks.stream().mapToInt(Stock::getId).toArray());
+                out.putExtra(Utilities.TRADE_STOCKS_TO_GIVE_USER, data.getIntArrayExtra(Utilities.TRADE_STOCKS_TO_GIVE_USER));
+                setResult(RESULT_OK, out);
+                finish();
+            }
         }
     }
 }

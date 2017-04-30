@@ -19,6 +19,7 @@ import android.widget.Toast;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.FLOOR_ID;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.FOUND_STARTING_FLOOR;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.GET_NEW_FLOOR;
+import static com.ddsnowboard.fantasystocksandroid.Utilities.LOAD_NEW_FLOOR;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.PLAYER_ID;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.USER_ID;
@@ -65,6 +66,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         IntentFilter filter = new IntentFilter(FOUND_STARTING_FLOOR);
+        filter.addAction(LOAD_NEW_FLOOR);
         BroadcastReceiver receiver = new FloorFoundListener();
         registerReceiver(receiver, filter);
     }
@@ -137,15 +139,14 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
     }
 
     class FloorFoundListener extends BroadcastReceiver {
-
+        public static final String TAG = "FloorFoundListener";
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Utilities.FOUND_STARTING_FLOOR)) {
+            if (intent.getAction().equals(Utilities.FOUND_STARTING_FLOOR) || intent.getAction().equals(LOAD_NEW_FLOOR)) {
                 int floorId = intent.getIntExtra(Utilities.FLOOR_ID, Utilities.UNKNOWN_ID);
                 if (floorId == Utilities.UNKNOWN_ID)
                     throw new RuntimeException("Something bad happened");
                 fab.setOnClickListener(new TradeSequenceCreator(floorId));
-                FloorActivity.this.unregisterReceiver(this);
             }
         }
     }

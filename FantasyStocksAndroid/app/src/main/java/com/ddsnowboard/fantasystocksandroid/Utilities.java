@@ -19,10 +19,15 @@ public class Utilities {
     public static final int UNKNOWN_ID = -1;
     public static final String LOAD_NEW_FLOOR = "getafloor";
     public static final String PLAYERS = "players";
-    public static final String STOCK = "stock";
-    public static final String STOCKS = "stocks";
+    public static final String STOCK_ID = "stock";
+    public static final String STOCKS = "allStocks";
     public static final int GET_STOCK_FOR_TRADE = 2;
     public static final String FOUND_STARTING_FLOOR = "foundStartingFloor";
+
+    public static final int MAKE_TRADE = 312;
+    // https://imgflip.com/i/1o4x4j
+    public static final String TRADE_STOCKS_TO_GIVE_USER = "lks ajileajsf iojasofjjk";
+    public static final String TRADE_STOCKS_FROM_USER = " asiofaosiufoiupoiupoiupoiueqwrpoiu";
 
 
     public static <T> boolean contains(T[] haystack, T needle) {

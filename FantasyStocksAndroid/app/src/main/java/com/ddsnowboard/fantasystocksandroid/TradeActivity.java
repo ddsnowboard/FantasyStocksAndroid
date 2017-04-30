@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +20,19 @@ import android.widget.Toast;
 
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetStockTask;
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetterTask;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.TradeUploader;
 import com.jameswk2.FantasyStocksAPI.Player;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.ddsnowboard.fantasystocksandroid.Utilities.GET_STOCK_FOR_TRADE;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
 
 
 public class TradeActivity extends AppCompatActivity {
+    public static final String TAG = "TradeActivity";
 
     private int playerId = Utilities.UNKNOWN_ID;
 
@@ -51,10 +55,8 @@ public class TradeActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // You're going to have to show this dynamically too...
                 Intent intent = new Intent(TradeActivity.this, StockPicker.class);
                 if (playerId == UNKNOWN_ID) {
-                    // throw new RuntimeException("You need to set the playerId!");
                     Toast.makeText(TradeActivity.this, "Please wait...", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -118,13 +120,18 @@ public class TradeActivity extends AppCompatActivity {
 
     protected static void sendTrade(int[] stocksToReceive, int[] stocksToSend,
                                     int currentRecipientId) {
-        // Go to the static singleton things I have that hold every element of the trade, put
-        // them all together, and call the server
         // Send this trade...
+        Utilities.TradeContainer tc = new Utilities.TradeContainer();
+        tc.setRecipientPlayerId(currentRecipientId);
+        tc.setRecipientStockIds(stocksToReceive);
+        tc.setSenderStockIds(stocksToSend);
+        TradeUploader tu = new TradeUploader();
+        tu.execute(tc);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GET_STOCK_FOR_TRADE) {
             if (resultCode == RESULT_OK) {
                 int stockId = data.getIntExtra(Utilities.STOCK_ID, UNKNOWN_ID);
@@ -135,9 +142,6 @@ public class TradeActivity extends AppCompatActivity {
                     GetterTask<Stock> task = new GetStockTask(this, adapter::add);
                     task.execute(() -> stockId);
                 }
-            }
-            else if(resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Please wait...", Toast.LENGTH_LONG).show();
             }
         }
     }

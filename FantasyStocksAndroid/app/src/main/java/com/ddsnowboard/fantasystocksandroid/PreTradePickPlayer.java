@@ -58,7 +58,6 @@ public class PreTradePickPlayer extends AppCompatActivity {
                     }
                     Arrays.stream(players)
                             .filter(p -> !p.getUser().equals(api.getUser()))
-                            .filter(p -> !p.isFloor())
                             .peek(p -> currentlyShownPlayers.add(p))
                             .forEach(p -> allPlayers.add(p));
                     adapter.notifyDataSetChanged();
@@ -148,7 +147,7 @@ public class PreTradePickPlayer extends AppCompatActivity {
                 Intent intent = new Intent(PreTradePickPlayer.this, FirstLevelTrade.class);
                 intent.putExtra(Utilities.PLAYER_ID, p.getId());
                 playerId = p.getId();
-                startActivity(intent);
+                startActivityForResult(intent, Utilities.MAKE_TRADE);
             });
         }
     }

@@ -27,24 +27,20 @@ public class SecondLevelTrade extends TradeActivity {
         if (playerId == Utilities.UNKNOWN_ID)
             throw new RuntimeException("You didn't give a playerId");
         GetterTask<Player> getUserPlayerTask = new GetPlayerTask(this, p -> {
-            Log.e(TAG, "We got the user player");
             setPlayer(p);
         });
 
         getUserPlayerTask.execute(() -> {
-            Log.e(TAG, "We called for the user player");
             Floor floor = Player.get(playerId).getFloor();
             User user = FantasyStocksAPI.getInstance().getUser();
-            Log.e(TAG, Arrays.toString(user.getPlayers()));
-            // It appears as though it's never getting down to the end of this lambda
-            // ?????????????
-            Arrays.stream(user.getPlayers())
+            int retval = Arrays.stream(user.getPlayers())
                     .filter(p -> p.getFloor().equals(floor))
-                    .peek(p -> Log.e(TAG, p.toString()))
-                    .findFirst()
+                    .findAny()
                     .get()
                     .getId();
+            return retval;
         });
+
         setText(R.string.loading);
         GetterTask<Player> task = new GetPlayerTask(this,
                 p -> setText(String.format("What stocks do you want to give %s?",

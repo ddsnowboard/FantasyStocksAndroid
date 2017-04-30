@@ -56,7 +56,6 @@ public class StockPicker extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 if (editable.length() == 0) {
-                    Log.d(TAG, allStocks.toString());
                     ArrayList<Stock> currentStocks = new ArrayList<>(allStocks);
                     adapter.setArray(currentStocks);
                 } else {

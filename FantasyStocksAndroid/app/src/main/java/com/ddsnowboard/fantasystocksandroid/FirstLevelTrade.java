@@ -2,6 +2,7 @@ package com.ddsnowboard.fantasystocksandroid;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetPlayerTask;
@@ -10,6 +11,7 @@ import com.jameswk2.FantasyStocksAPI.Stock;
 import java.util.ArrayList;
 
 public class FirstLevelTrade extends TradeActivity {
+    public static final String TAG = "FirstLevelTrade";
 
     private ArrayList<Stock> stocks = new ArrayList<>();
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ListView;
+
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.UpdateTokenTask;
 
 public class FloorActivity extends FragmentActivity implements StockFragment.OnListFragmentInteractionListener {
     ListView drawer;
@@ -38,6 +41,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             startActivity(new Intent(this, LoginActivity.class));
         }
 
+
         // Initialize UI components...
         drawer = (ListView) findViewById(R.id.drawer);
         drawerHandler = new FloorDrawerHandler(drawer);
@@ -51,6 +55,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         filter.addAction(Utilities.LOAD_NEW_FLOOR);
         BroadcastReceiver receiver = new FloorFoundListener();
         registerReceiver(receiver, filter);
+        new UpdateTokenTask().execute();
     }
 
     @Override

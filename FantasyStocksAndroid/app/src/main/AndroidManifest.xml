@@ -27,7 +27,21 @@
         <activity android:name=".StockPicker" />
         <activity android:name=".SecondLevelTrade" />
         <activity android:name=".JoinFloor" />
-        <activity android:name=".PreTradePickPlayer"></activity>
+        <activity android:name=".PreTradePickPlayer" />
+
+        <service android:name=".FirebaseIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".NotificationService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"></action>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

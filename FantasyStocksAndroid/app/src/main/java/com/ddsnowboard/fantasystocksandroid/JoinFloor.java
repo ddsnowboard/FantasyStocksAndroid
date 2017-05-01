@@ -1,8 +1,9 @@
 package com.ddsnowboard.fantasystocksandroid;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,49 +11,67 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.CreatePlayerTask;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetAllFloorsTask;
+import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 import com.jameswk2.FantasyStocksAPI.Floor;
+import com.jameswk2.FantasyStocksAPI.Player;
+import com.jameswk2.FantasyStocksAPI.User;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class JoinFloor extends AppCompatActivity {
     public static final String TAG = "JoinFloor";
-    Floor[] floors;
+    ArrayList<Floor> floors = new ArrayList<>();
+    Adapter adapter;
 
     RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_floor);
-        Gson gson = new Gson();
-        Intent intent = getIntent();
-        floors = new Floor[0];
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new Adapter(floors));
+        adapter = new Adapter(floors);
+        recyclerView.setAdapter(adapter);
+        GetAllFloorsTask task = new GetAllFloorsTask(this,
+                floors -> {
+                    Arrays.stream(floors).forEach(JoinFloor.this.floors::add);
+                    adapter.notifyDataSetChanged();
+                },
+                floor -> {
+                    User u = FantasyStocksAPI.getInstance().getUser();
+                    Player[] usersPlayers = u.getPlayers();
+                    return !Arrays.stream(usersPlayers).anyMatch(p -> p.getFloor().equals(floor));
+                });
+        task.execute();
     }
 
     class Adapter extends RecyclerView.Adapter<JoinFloor.ViewHolder> {
 
-        Floor[] floors;
-        public Adapter(Floor[] floors) {
+        ArrayList<Floor> floors;
+
+        public Adapter(ArrayList<Floor> floors) {
             this.floors = floors;
         }
 
         @Override
         public JoinFloor.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.floor_list_container, parent, false);
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.floor_list_container, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(JoinFloor.ViewHolder holder, int position) {
-            holder.bind(floors[position]);
+            holder.bind(floors.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return floors.length;
+            return floors.size();
         }
     }
 
@@ -66,17 +85,19 @@ public class JoinFloor extends AppCompatActivity {
             name = (TextView) itemView.findViewById(R.id.left);
         }
 
-        public void bind(Floor f) {
-            name.setText(f.getName());
-            parent.setOnClickListener(null);
-            parent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent output = new Intent();
-                    output.putExtra(Utilities.FLOOR_ID, f.getId());
-                    setResult(RESULT_OK, output);
+        public void bind(Floor floor) {
+            name.setText(floor.getName());
+            parent.setOnClickListener(view -> {
+                CreatePlayerTask task = new CreatePlayerTask(p -> {
+                    Intent broadcast = new Intent();
+                    broadcast.setAction(Utilities.LOAD_NEW_FLOOR);
+                    broadcast.putExtra(Utilities.FLOOR_ID, floor.getId());
+                    sendBroadcast(broadcast);
                     finish();
-                }
+                });
+                /* Today, Will gives up hope that machines are deterministic and
+                instead begins worshipping Ba'al in hopes of finishing his app on time. */
+                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, () -> floor.getId());
             });
         }
     }

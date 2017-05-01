@@ -33,10 +33,9 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         // TODO: Should this finish() or not? How is this going to get the username back?
         // startActivityForResult()?
         if (!prefs.contains(getString(R.string.username))) {
-            Object o = null;
-            System.out.println(o.toString());
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            if (true)
+                throw new RuntimeException("I need to implement this properly");
+            startActivity(new Intent(this, LoginActivity.class));
         }
 
         // Initialize UI components...
@@ -73,9 +72,9 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         @Override
         public CharSequence getPageTitle(int position) {
             super.getPageTitle(position);
-            if(position == 0)
+            if (position == 0)
                 return "Stocks";
-            else if(position == 1)
+            else if (position == 1)
                 return "Players";
             else
                 throw new RuntimeException("This has too many tabs");

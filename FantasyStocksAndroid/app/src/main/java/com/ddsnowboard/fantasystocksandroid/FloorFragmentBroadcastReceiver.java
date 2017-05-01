@@ -10,10 +10,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 
-import static com.ddsnowboard.fantasystocksandroid.Utilities.FLOOR_ID;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.LOAD_NEW_FLOOR;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
-
 /**
  * Created by ddsnowboard on 4/27/17.
  */
@@ -29,9 +25,9 @@ public class FloorFragmentBroadcastReceiver<T extends GetterTask<J>, J> extends 
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(LOAD_NEW_FLOOR)) {
-            int id = intent.getIntExtra(FLOOR_ID, UNKNOWN_ID);
-            if (id == UNKNOWN_ID)
+        if (intent.getAction().equals(Utilities.LOAD_NEW_FLOOR)) {
+            int id = intent.getIntExtra(Utilities.FLOOR_ID, Utilities.UNKNOWN_ID);
+            if (id == Utilities.UNKNOWN_ID)
                 throw new RuntimeException("Something bad happened");
             try {
                 constructor.newInstance(context, callback).execute(() -> id);

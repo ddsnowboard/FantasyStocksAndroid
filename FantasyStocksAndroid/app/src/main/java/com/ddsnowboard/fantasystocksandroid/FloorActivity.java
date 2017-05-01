@@ -88,6 +88,17 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         }
 
         @Override
+        public CharSequence getPageTitle(int position) {
+            super.getPageTitle(position);
+            if(position == 0)
+                return "Stocks";
+            else if(position == 1)
+                return "Players";
+            else
+                throw new RuntimeException("This has too many tabs");
+        }
+
+        @Override
         public Fragment getItem(int position) {
             if (position == STOCKS_PAGE) {
                 StockFragment stocksFragment = new StockFragment();
@@ -140,6 +151,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
     class FloorFoundListener extends BroadcastReceiver {
         public static final String TAG = "FloorFoundListener";
+
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Utilities.FOUND_STARTING_FLOOR) || intent.getAction().equals(LOAD_NEW_FLOOR)) {

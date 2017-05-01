@@ -16,8 +16,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <android.support.v4.view.PagerTitleStrip
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="top"
+                android:background="#29ad5e"
+                android:textColor="#fff"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+
+
 
         </android.support.v4.view.ViewPager>
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
@@ -46,10 +60,12 @@
             android:id="@+id/joinFloor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="5dp"
             android:layout_gravity="right"
             android:text="@string/joinFloor"
-            android:textSize="12pt" />
+            android:textColor="#000000"
+            android:textSize="11pt" />
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

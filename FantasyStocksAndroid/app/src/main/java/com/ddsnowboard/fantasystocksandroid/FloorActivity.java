@@ -14,15 +14,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import static com.ddsnowboard.fantasystocksandroid.Utilities.FLOOR_ID;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.FOUND_STARTING_FLOOR;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.GET_NEW_FLOOR;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.LOAD_NEW_FLOOR;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.PLAYER_ID;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
-import static com.ddsnowboard.fantasystocksandroid.Utilities.USER_ID;
 
 public class FloorActivity extends FragmentActivity implements StockFragment.OnListFragmentInteractionListener {
     ListView drawer;
@@ -51,22 +42,14 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         // Initialize UI components...
         drawer = (ListView) findViewById(R.id.drawer);
         drawerHandler = new FloorDrawerHandler(drawer);
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), UNKNOWN_ID);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), Utilities.UNKNOWN_ID);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(pagerAdapter);
 
-        findViewById(R.id.joinFloor).setOnClickListener((view) -> {
-            // TODO: This needs to be changed to reflect the actual floors
-            // available. I could probably just put it in the actual class
-            // though and not do any work here. Appealing...
-            Intent intent = new Intent(FloorActivity.this, JoinFloor.class);
-            intent.putExtra(USER_ID, 42);
-            startActivityForResult(intent, GET_NEW_FLOOR);
-        });
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        IntentFilter filter = new IntentFilter(FOUND_STARTING_FLOOR);
-        filter.addAction(LOAD_NEW_FLOOR);
+        IntentFilter filter = new IntentFilter(Utilities.FOUND_STARTING_FLOOR);
+        filter.addAction(Utilities.LOAD_NEW_FLOOR);
         BroadcastReceiver receiver = new FloorFoundListener();
         registerReceiver(receiver, filter);
     }
@@ -103,13 +86,13 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             if (position == STOCKS_PAGE) {
                 StockFragment stocksFragment = new StockFragment();
                 Bundle bundle = new Bundle();
-                bundle.putInt(PLAYER_ID, currentPlayerId);
+                bundle.putInt(Utilities.PLAYER_ID, currentPlayerId);
                 stocksFragment.setArguments(bundle);
                 return stocksFragment;
             } else if (position == PLAYERS_PAGE) {
                 PlayerFragment fragment = new PlayerFragment();
                 Bundle bundle = new Bundle();
-                bundle.putInt(PLAYER_ID, currentPlayerId);
+                bundle.putInt(Utilities.PLAYER_ID, currentPlayerId);
                 fragment.setArguments(bundle);
                 return fragment;
             } else {
@@ -124,16 +107,6 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == GET_NEW_FLOOR) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Joined a new floor", Toast.LENGTH_LONG).show();
-                // TODO: Actually join the floor...
-            }
-        }
-    }
-
     class TradeSequenceCreator implements View.OnClickListener {
         private int floorId;
 
@@ -144,7 +117,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(FloorActivity.this, PreTradePickPlayer.class);
-            intent.putExtra(FLOOR_ID, floorId);
+            intent.putExtra(Utilities.FLOOR_ID, floorId);
             startActivity(intent);
         }
     }
@@ -154,7 +127,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Utilities.FOUND_STARTING_FLOOR) || intent.getAction().equals(LOAD_NEW_FLOOR)) {
+            if (intent.getAction().equals(Utilities.FOUND_STARTING_FLOOR) || intent.getAction().equals(Utilities.LOAD_NEW_FLOOR)) {
                 int floorId = intent.getIntExtra(Utilities.FLOOR_ID, Utilities.UNKNOWN_ID);
                 if (floorId == Utilities.UNKNOWN_ID)
                     throw new RuntimeException("Something bad happened");

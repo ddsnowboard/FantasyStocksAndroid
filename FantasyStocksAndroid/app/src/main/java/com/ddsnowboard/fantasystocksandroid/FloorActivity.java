@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -66,6 +65,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
     class PagerAdapter extends FragmentPagerAdapter {
         final int STOCKS_PAGE = 0;
         final int PLAYERS_PAGE = 1;
+        final int TRADES_PAGE = 2;
 
         int currentPlayerId;
 
@@ -77,10 +77,12 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         @Override
         public CharSequence getPageTitle(int position) {
             super.getPageTitle(position);
-            if (position == 0)
+            if (position == STOCKS_PAGE)
                 return "Stocks";
-            else if (position == 1)
+            else if (position == PLAYERS_PAGE)
                 return "Players";
+            else if(position == TRADES_PAGE)
+                return "Trades";
             else
                 throw new RuntimeException("This has too many tabs");
         }
@@ -99,6 +101,13 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
                 bundle.putInt(Utilities.PLAYER_ID, currentPlayerId);
                 fragment.setArguments(bundle);
                 return fragment;
+            }
+            else if(position == TRADES_PAGE) {
+                TradesFragment fragment = new TradesFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt(Utilities.PLAYER_ID, currentPlayerId);
+                fragment.setArguments(bundle);
+                return fragment;
             } else {
                 throw new RuntimeException("Something strange happened");
             }
@@ -106,7 +115,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
         @Override
         public int getCount() {
-            final int NUMBER_OF_CARDS = 2;
+            final int NUMBER_OF_CARDS = 3;
             return NUMBER_OF_CARDS;
         }
     }

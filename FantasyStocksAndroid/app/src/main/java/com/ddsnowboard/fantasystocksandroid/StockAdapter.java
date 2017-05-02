@@ -21,7 +21,7 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
     @Override
     public StockAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ConstraintLayout view = (ConstraintLayout) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_stock_list, parent, false);
+                .inflate(R.layout.fragment_recyclerview, parent, false);
         return new ViewHolder(view);
     }
 

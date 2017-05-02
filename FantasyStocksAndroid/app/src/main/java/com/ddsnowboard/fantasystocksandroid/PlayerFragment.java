@@ -33,7 +33,7 @@ public class PlayerFragment extends Fragment {
 
     StockFragment.OnListFragmentInteractionListener listener;
 
-    private final Consumer<Player[]> callbackFunction = players -> {
+    private final Consumer<Player[]> receiverCallback = players -> {
         this.players.clear();
         Arrays.stream(players).sorted(Comparator.comparingInt(p -> -p.getPoints()))
                 .filter(p -> !p.isFloor())
@@ -46,14 +46,14 @@ public class PlayerFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         IntentFilter filter = new IntentFilter(Utilities.LOAD_NEW_FLOOR);
-        receiver = new FloorFragmentBroadcastReceiver<>(callbackFunction, GetPlayersTask.class);
+        receiver = new FloorFragmentBroadcastReceiver<>(receiverCallback, GetPlayersTask.class);
 
         getContext().registerReceiver(receiver, filter);
         adapter = new PlayerRecyclerAdapter(players, listener);
 
         if (getArguments() != null) {
             int playerId = getArguments().getInt(Utilities.PLAYER_ID);
-            GetPlayersTask task = new GetPlayersTask(getContext(), callbackFunction);
+            GetPlayersTask task = new GetPlayersTask(getContext(), receiverCallback);
             if (playerId != Utilities.UNKNOWN_ID)
                 task.execute(() -> Player.get(playerId).getFloor().getId());
             else
@@ -65,7 +65,7 @@ public class PlayerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_stock_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {

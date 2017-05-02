@@ -13,5 +13,6 @@ public class NotificationService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
+        Log.d(TAG, String.format("The data is %s", remoteMessage.getData().toString()));
     }
 }

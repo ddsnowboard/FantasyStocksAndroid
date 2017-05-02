@@ -2,6 +2,7 @@ package com.ddsnowboard.fantasystocksandroid;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -132,6 +133,11 @@ public class TradesFragment extends Fragment {
             rightList.setText(rightListArray.stream().collect(Collectors.joining("\n")));
 
             // TODO: Set up the activity to actually view trades, and put it in here in an onclicklistener
+            parent.setOnClickListener(view -> {
+                Intent intent = new Intent(TradesFragment.this.getContext(), ViewTradeActivity.class);
+                intent.putExtra(Utilities.TRADE_ID, t.getId());
+                startActivity(intent);
+            });
         }
     }
 }

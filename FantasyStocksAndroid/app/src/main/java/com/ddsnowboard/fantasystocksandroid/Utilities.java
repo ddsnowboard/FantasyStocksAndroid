@@ -21,6 +21,7 @@ public class Utilities {
     public static final String PLAYERS = "players";
     public static final String STOCK_ID = "stock";
     public static final String STOCKS = "allStocks";
+    public static final String TRADE_ID = "tradeIdNumber";
 
     public static final int GET_NEW_FLOOR = 1;
     public static final int GET_STOCK_FOR_TRADE = 2;

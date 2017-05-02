@@ -1,5 +1,7 @@
 package com.ddsnowboard.fantasystocksandroid;
 
+import android.util.Log;
+
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
@@ -9,10 +11,16 @@ import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
  */
 
 public class FirebaseIdService extends FirebaseInstanceIdService {
+    public static final String TAG = "FirebaseIdService";
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
         String newToken = FirebaseInstanceId.getInstance().getToken();
-        FantasyStocksAPI.getInstance().registerFirebaseId(newToken);
+        try {
+            FantasyStocksAPI.getInstance().registerFirebaseId(newToken);
+        }
+        catch (UnsupportedOperationException e){
+            Log.e(TAG, "We need to log in before we can send the FirebaseId");
+        }
     }
 }

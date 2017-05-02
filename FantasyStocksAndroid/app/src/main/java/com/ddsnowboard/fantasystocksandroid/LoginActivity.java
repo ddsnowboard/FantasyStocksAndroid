@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.LoginTask;
+import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 
 
 public class LoginActivity extends AppCompatActivity {

@@ -35,9 +35,9 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         // TODO: Should this finish() or not? How is this going to get the username back?
         // startActivityForResult()?
         if (!prefs.contains(getString(R.string.username))) {
-            if (true)
-                throw new RuntimeException("I need to implement this properly");
             startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
         }
 
 

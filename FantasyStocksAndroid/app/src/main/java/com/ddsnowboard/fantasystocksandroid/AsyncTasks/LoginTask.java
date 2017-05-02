@@ -2,6 +2,7 @@ package com.ddsnowboard.fantasystocksandroid.AsyncTasks;
 
 import android.os.AsyncTask;
 
+import com.ddsnowboard.fantasystocksandroid.FirebaseIdService;
 import com.ddsnowboard.fantasystocksandroid.LoginActivity;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 
@@ -24,6 +25,7 @@ public class LoginTask extends AsyncTask<String, Void, Boolean> {
         String password = strings[1];
         try {
             api.login(username, password);
+            new FirebaseIdService().onTokenRefresh();
         } catch (IllegalArgumentException e) {
             return Boolean.FALSE;
         }

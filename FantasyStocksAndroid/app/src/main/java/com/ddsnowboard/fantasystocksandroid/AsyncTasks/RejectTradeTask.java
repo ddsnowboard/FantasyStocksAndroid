@@ -7,7 +7,8 @@ import com.jameswk2.FantasyStocksAPI.Trade;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 5/2/17.
+ * This tells the server that a certain trade, specified by the first `tradeIdSupplier`, has been
+ * declined.
  */
 
 public class RejectTradeTask extends AsyncTask<IntSupplier, Void, Void> {

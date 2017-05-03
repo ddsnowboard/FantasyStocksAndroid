@@ -7,7 +7,7 @@ import com.jameswk2.FantasyStocksAPI.Trade;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 5/2/17.
+ * This accepts a Trade whose id is given by the first tradeIdSupplier
  */
 
 public class AcceptTradeTask extends AsyncTask<IntSupplier, Void, Void> {

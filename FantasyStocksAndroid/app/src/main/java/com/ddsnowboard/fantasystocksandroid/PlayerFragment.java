@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 
 /**
- * Created by ddsnowboard on 4/24/17.
+ * This takes care of the Player portion of the main activity
  */
 
 public class PlayerFragment extends Fragment {
@@ -31,8 +31,7 @@ public class PlayerFragment extends Fragment {
 
     private BroadcastReceiver receiver;
 
-    StockFragment.OnListFragmentInteractionListener listener;
-
+    // This is what happens when we get a broadcast to reload a floor
     private final Consumer<Player[]> receiverCallback = players -> {
         this.players.clear();
         Arrays.stream(players).sorted(Comparator.comparingInt(p -> -p.getPoints()))
@@ -49,7 +48,7 @@ public class PlayerFragment extends Fragment {
         receiver = new FloorFragmentBroadcastReceiver<>(receiverCallback, GetPlayersTask.class);
 
         getContext().registerReceiver(receiver, filter);
-        adapter = new PlayerRecyclerAdapter(players, listener);
+        adapter = new PlayerRecyclerAdapter(players);
 
         if (getArguments() != null) {
             int playerId = getArguments().getInt(Utilities.PLAYER_ID);
@@ -57,7 +56,7 @@ public class PlayerFragment extends Fragment {
             if (playerId != Utilities.UNKNOWN_ID)
                 task.execute(() -> Player.get(playerId).getFloor().getId());
             else
-                task.execute(() -> (-1));
+                task.execute(() -> (Utilities.UNKNOWN_ID));
         } else
             throw new RuntimeException("Empty arguments");
     }
@@ -67,32 +66,10 @@ public class PlayerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(adapter);
-        }
+        Context context = view.getContext();
+        RecyclerView recyclerView = (RecyclerView) view;
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(adapter);
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof StockFragment.OnListFragmentInteractionListener) {
-            listener = (StockFragment.OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        if (receiver != null)
-            getContext().unregisterReceiver(receiver);
-        listener = null;
     }
 }

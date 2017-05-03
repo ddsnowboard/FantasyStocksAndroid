@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,9 @@ import com.ddsnowboard.fantasystocksandroid.AsyncTasks.LoginTask;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 
 
+/**
+ * This is the activity that handles logging in
+ */ 
 public class LoginActivity extends AppCompatActivity {
     public static final String TAG = "LoginActivity";
 
@@ -30,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
 
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
+        // This makes sure that when you click "next" on the keyboard, you go to the next text box
         username.setOnEditorActionListener((textView, i, keyEvent) -> {
             if(i == EditorInfo.IME_ACTION_NEXT) {
                 username.clearFocus();
@@ -38,15 +43,9 @@ public class LoginActivity extends AppCompatActivity {
             }
             return false;
         });
-
-        Button register = (Button) findViewById(R.id.register);
-        Button login = (Button) findViewById(R.id.login);
-        register.setOnClickListener(view -> register());
-
-        login.setOnClickListener(view -> login());
     }
 
-    private void login() {
+    public void login(View v) {
         LoginTask task = new LoginTask(this);
         task.execute(username.getText().toString(), password.getText().toString());
         bar.show();
@@ -69,7 +68,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void register() {
-
+    public void register(View v) {
+        FantasyStocksAPI.getInstance().register(username.getText().toString(), password.getText().toString());
+        FantasyStocksAPI.getInstance().login(username.getText().toString(), password.getText().toString());
     }
 }

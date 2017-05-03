@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 4/29/17.
+ * This, given a `Stock`'s id, gets it from the server.
  */
 
 public class GetStockTask extends GetterTask<Stock> {
@@ -18,7 +18,7 @@ public class GetStockTask extends GetterTask<Stock> {
     }
 
     @Override
-    protected Stock doInBackground(IntSupplier... intSuppliers) {
-        return Stock.get(intSuppliers[0].getAsInt());
+    protected Stock doInBackground(IntSupplier... stockIdSuppliers) {
+        return Stock.get(stockIdSuppliers[0].getAsInt());
     }
 }

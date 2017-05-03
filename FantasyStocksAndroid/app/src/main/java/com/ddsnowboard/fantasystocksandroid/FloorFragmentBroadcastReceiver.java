@@ -11,7 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 
 /**
- * Created by ddsnowboard on 4/27/17.
+ * This is a BroadcastReceiver for when you want to go get some data and do something with it 
+ * on every broadcast. You just instantiate it with a callback and one of the GetterTasks, and it 
+ * takes care of the rest. 
  */
 
 public class FloorFragmentBroadcastReceiver<T extends GetterTask<J>, J> extends BroadcastReceiver {

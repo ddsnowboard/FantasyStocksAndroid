@@ -16,7 +16,9 @@ import java.util.function.IntSupplier;
 import java.util.stream.Stream;
 
 /**
- * Created by ddsnowboard on 4/24/17.
+ * This, given the id of a floor, gets an array of all the stocks on that floor. If an id of -1
+ * is given, it looks at the context and gets the stocks of the first floor that the logged in player
+ * belongs to.
  */
 
 public class GetStocksTask extends GetterTask<Stock[]> {
@@ -27,8 +29,8 @@ public class GetStocksTask extends GetterTask<Stock[]> {
     }
 
     @Override
-    protected Stock[] doInBackground(IntSupplier... generators) {
-        int floorId = generators[0].getAsInt();
+    protected Stock[] doInBackground(IntSupplier... floorIdGenerators) {
+        int floorId = floorIdGenerators[0].getAsInt();
         if (floorId == -1) {
             // We should get the first floor that this guy owns
             User u = Utilities.login(ctx);

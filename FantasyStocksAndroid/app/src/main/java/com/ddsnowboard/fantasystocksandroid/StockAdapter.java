@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
 /**
- * Created by ddsnowboard on 4/24/17.
+ * This is the adapter for the stocks portion of the main activity
  */
 
 public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> {
@@ -18,6 +18,7 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> 
         super();
         this.stocks = stocks;
     }
+
     @Override
     public StockAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ConstraintLayout view = (ConstraintLayout) LayoutInflater.from(parent.getContext())

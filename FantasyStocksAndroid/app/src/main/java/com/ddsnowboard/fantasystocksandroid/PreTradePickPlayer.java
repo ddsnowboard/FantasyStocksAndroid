@@ -24,10 +24,11 @@ import java.util.Arrays;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.FLOOR_ID;
 import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
 
+/**
+ * This chooses the other user to Trade with before the User can being actually making the Trade
+ */
 public class PreTradePickPlayer extends AppCompatActivity {
     public static final String TAG = "PreTradePickPlayer";
-
-    public static PreTradePickPlayer currentPlayerPicker;
 
     EditText searchBox;
     RecyclerView list;
@@ -38,7 +39,6 @@ public class PreTradePickPlayer extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentPlayerPicker = this;
         setContentView(R.layout.activity_pick_player);
         searchBox = (EditText) findViewById(R.id.searchBox);
         list = (RecyclerView) findViewById(R.id.recyclerView);
@@ -49,6 +49,7 @@ public class PreTradePickPlayer extends AppCompatActivity {
         Adapter adapter = new Adapter(currentlyShownPlayers);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this));
+
         GetPlayersTask task = new GetPlayersTask(this,
                 players -> {
                     // 2 = 1 floor + 1 user (the only one)
@@ -58,8 +59,8 @@ public class PreTradePickPlayer extends AppCompatActivity {
                     }
                     Arrays.stream(players)
                             .filter(p -> !p.getUser().equals(api.getUser()))
-                            .peek(p -> currentlyShownPlayers.add(p))
-                            .forEach(p -> allPlayers.add(p));
+                            .peek(currentlyShownPlayers::add)
+                            .forEach(allPlayers::add);
                     adapter.notifyDataSetChanged();
                 });
 
@@ -68,12 +69,10 @@ public class PreTradePickPlayer extends AppCompatActivity {
 
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -117,6 +116,8 @@ public class PreTradePickPlayer extends AppCompatActivity {
     }
 
     @Override
+    /* This calls the first level, which calls the second level, which returns a reult to the first level, which 
+     * returns its result right here.  */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == Utilities.MAKE_TRADE) {

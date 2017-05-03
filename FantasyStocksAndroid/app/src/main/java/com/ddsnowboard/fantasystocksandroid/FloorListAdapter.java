@@ -14,7 +14,7 @@ import com.jameswk2.FantasyStocksAPI.Floor;
 import java.util.ArrayList;
 
 /**
- * Created by ddsnowboard on 4/25/17.
+ * This is a special ArrayAdapter for Floors
  */
 
 public class FloorListAdapter extends ArrayAdapter<Floor> {

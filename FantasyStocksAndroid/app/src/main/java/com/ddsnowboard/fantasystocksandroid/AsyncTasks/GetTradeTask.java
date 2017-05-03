@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 5/2/17.
+ * This gets a Trade, given a trade id in an IntSupplier
  */
 
 public class GetTradeTask extends GetterTask<Trade> {

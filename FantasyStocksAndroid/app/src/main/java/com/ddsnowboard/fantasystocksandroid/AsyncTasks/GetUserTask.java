@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 5/1/17.
+ * This task gets a User, given a user id in an IntSupplier
  */
 
 public class GetUserTask extends GetterTask<User> {

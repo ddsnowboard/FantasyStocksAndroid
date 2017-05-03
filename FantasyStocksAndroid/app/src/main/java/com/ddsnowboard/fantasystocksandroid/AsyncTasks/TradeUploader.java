@@ -12,7 +12,8 @@ import com.jameswk2.FantasyStocksAPI.Trade;
 import java.util.Arrays;
 
 /**
- * Created by ddsnowboard on 4/29/17.
+ * This, given a Trade encoded as a special class, a {@link com.ddsnowboard.fantasystocksandroid.Utilities.TradeContainer},
+ * uploads the Trade to the server
  */
 
 public class TradeUploader extends AsyncTask<Utilities.TradeContainer, Void, Void> {

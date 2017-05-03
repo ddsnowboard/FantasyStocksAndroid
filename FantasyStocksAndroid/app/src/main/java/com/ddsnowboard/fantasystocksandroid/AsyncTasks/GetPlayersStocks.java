@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 4/29/17.
+ * This returns all the stocks owned by a certain Player, specified by the first playerIdSupplier
  */
 
 public class GetPlayersStocks extends GetterTask<Stock[]>{
@@ -19,8 +19,8 @@ public class GetPlayersStocks extends GetterTask<Stock[]>{
     }
 
     @Override
-    protected Stock[] doInBackground(IntSupplier... intSuppliers) {
-        Player player = Player.get(intSuppliers[0].getAsInt());
+    protected Stock[] doInBackground(IntSupplier... playerIdSuppliers) {
+        Player player = Player.get(playerIdSuppliers[0].getAsInt());
         return Arrays.stream(player.getStocks()).mapToInt(Stock::getId).mapToObj(Stock::get).toArray(Stock[]::new);
     }
 }

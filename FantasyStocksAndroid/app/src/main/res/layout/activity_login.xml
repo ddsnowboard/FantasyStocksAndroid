@@ -41,6 +41,7 @@
             android:layout_height="wrap_content">
             <Button
                 android:id="@+id/register"
+                android:onClick="register"
                 android:text="@string/register"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,6 +53,7 @@
 
             <Button
                 android:id="@+id/login"
+                android:onClick="login"
                 android:text="@string/login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -16,6 +16,9 @@ import com.jameswk2.FantasyStocksAPI.User;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * This is the last screen in the trading sequence
+ */
 public class SecondLevelTrade extends TradeActivity {
     public static final String TAG = "SecondLevelTrade";
     ArrayList<Stock> stocks = new ArrayList<Stock>();
@@ -34,17 +37,19 @@ public class SecondLevelTrade extends TradeActivity {
             Floor floor = Player.get(playerId).getFloor();
             User user = FantasyStocksAPI.getInstance().getUser();
             int retval = Arrays.stream(user.getPlayers())
-                    .filter(p -> p.getFloor().equals(floor))
-                    .findAny()
-                    .get()
-                    .getId();
+                .filter(p -> p.getFloor().equals(floor))
+                .findAny()
+                .get()
+                .getId();
             return retval;
         });
 
         setText(R.string.loading);
+        // Set the text at the top of the screen
         GetterTask<Player> task = new GetPlayerTask(this,
                 p -> setText(String.format("What stocks do you want to give %s?",
                         p.getUser().getUsername())));
+
         task.execute(() -> playerId);
 
         fab.setOnClickListener(new View.OnClickListener() {

@@ -17,7 +17,11 @@ import android.widget.ListView;
 
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.UpdateTokenTask;
 
-public class FloorActivity extends FragmentActivity implements StockFragment.OnListFragmentInteractionListener {
+/**
+ * This is the main activity of the application. It does little more than hold a view that holds three Fragments 
+ * that hold all the real information in the app.
+ */
+public class FloorActivity extends FragmentActivity {
     ListView drawer;
 
     FloatingActionButton fab;
@@ -32,8 +36,7 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         setContentView(R.layout.activity_floor);
         SharedPreferences prefs = getSharedPreferences(getString(R.string.preferences), 0);
 
-        // TODO: Should this finish() or not? How is this going to get the username back?
-        // startActivityForResult()?
+        // Check if a user is logged in
         if (!prefs.contains(getString(R.string.username))) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -50,22 +53,20 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
+        // Register BroadcastReceiver for reloading everything
         IntentFilter filter = new IntentFilter(Utilities.FOUND_STARTING_FLOOR);
         filter.addAction(Utilities.LOAD_NEW_FLOOR);
         BroadcastReceiver receiver = new FloorFoundListener();
         registerReceiver(receiver, filter);
+
         new UpdateTokenTask().execute();
     }
 
-    @Override
-    public void onListFragmentInteraction(Object o) {
-        // Does nothing
-    }
-
     class PagerAdapter extends FragmentPagerAdapter {
-        final int STOCKS_PAGE = 0;
-        final int PLAYERS_PAGE = 1;
-        final int TRADES_PAGE = 2;
+        private static final int NUMBER_OF_CARDS = 3;
+        private static final int STOCKS_PAGE = 0;
+        private static final int PLAYERS_PAGE = 1;
+        private static final int TRADES_PAGE = 2;
 
         int currentPlayerId;
 
@@ -74,6 +75,10 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
             currentPlayerId = startingPlayerId;
         }
 
+        /**
+         * This takes care of getting the text for the tabs on the top of 
+         * the page.
+         */
         @Override
         public CharSequence getPageTitle(int position) {
             super.getPageTitle(position);
@@ -115,11 +120,15 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
 
         @Override
         public int getCount() {
-            final int NUMBER_OF_CARDS = 3;
             return NUMBER_OF_CARDS;
         }
     }
 
+    /*
+     * This class is just a nice way to wrap up the functionality for
+     * starting a trade. You create of of these and pass it as the OnClickListener to whatever 
+     * button starts a Trade.
+     */
     class TradeSequenceCreator implements View.OnClickListener {
         private int floorId;
 
@@ -135,6 +144,9 @@ public class FloorActivity extends FragmentActivity implements StockFragment.OnL
         }
     }
 
+    /*
+     * This details what to do when a floor reload is called
+     */
     class FloorFoundListener extends BroadcastReceiver {
         public static final String TAG = "FloorFoundListener";
 

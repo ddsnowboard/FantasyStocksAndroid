@@ -7,7 +7,7 @@ import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 import com.jameswk2.FantasyStocksAPI.User;
 
 /**
- * Created by ddsnowboard on 4/28/17.
+ * This is just a file for stuff and things
  */
 
 public class Utilities {
@@ -33,14 +33,6 @@ public class Utilities {
     public static final String TRADE_STOCKS_FROM_USER = "asiofaosiufoiupoiupoiupoiueqwrpoiu";
     public static final int RESULT_NOT_READY = 5;
 
-
-
-    public static <T> boolean contains(T[] haystack, T needle) {
-        for (T s : haystack)
-            if (s.equals(needle))
-                return true;
-        return false;
-    }
 
     public static User login(Context ctx) {
         FantasyStocksAPI api = FantasyStocksAPI.getInstance();

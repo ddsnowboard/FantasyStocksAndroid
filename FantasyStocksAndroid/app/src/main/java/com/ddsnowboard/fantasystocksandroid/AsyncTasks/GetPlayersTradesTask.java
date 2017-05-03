@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 5/1/17.
+ * This gets the Trades for the logged-in user on the floor given by the first floorIdSupplier
  */
 
 public class GetPlayersTradesTask extends GetterTask<Trade[]> {

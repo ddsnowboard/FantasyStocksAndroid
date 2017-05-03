@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Created by ddsnowboard on 5/1/17.
+ * This is the part of the main activity that shows the trades
  */
 
 public class TradesFragment extends Fragment {
@@ -35,6 +35,7 @@ public class TradesFragment extends Fragment {
     final ArrayList<Trade> trades = new ArrayList<>();
     Adapter adapter;
 
+    // This is what we do when we get a call to reload / repopulate
     Consumer<Trade[]> receivedTradesCallback = trades -> {
         TradesFragment.this.trades.clear();
         Arrays.stream(trades).forEach(TradesFragment.this.trades::add);
@@ -124,7 +125,8 @@ public class TradesFragment extends Fragment {
             leftListArray.clear();
             leftListArray.add("Your stocks:");
             Arrays.stream(t.getRecipientStocks()).map(Stock::getSymbol).forEach(leftListArray::add);
-            // Just breaking the laws of both the gods and of men. Don't mind me...
+            // Fun fact: if you tell a ListView to take as much vertical space as wants, it
+            // will show one item.
             leftList.setText(leftListArray.stream().collect(Collectors.joining("\n")));
 
             rightListArray.clear();
@@ -132,7 +134,6 @@ public class TradesFragment extends Fragment {
             Arrays.stream(t.getSenderStocks()).map(Stock::getSymbol).forEach(rightListArray::add);
             rightList.setText(rightListArray.stream().collect(Collectors.joining("\n")));
 
-            // TODO: Set up the activity to actually view trades, and put it in here in an onclicklistener
             parent.setOnClickListener(view -> {
                 Intent intent = new Intent(TradesFragment.this.getContext(), ViewTradeActivity.class);
                 intent.putExtra(Utilities.TRADE_ID, t.getId());

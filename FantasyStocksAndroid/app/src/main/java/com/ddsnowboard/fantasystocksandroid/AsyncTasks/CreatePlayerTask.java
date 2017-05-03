@@ -13,7 +13,8 @@ import java.util.function.IntSupplier;
 
 
 /**
- * Created by ddsnowboard on 5/1/17.
+ * This, given the id of a Floor, creates and returns a Player for the currently 
+ * logged in user on that Floor.
  */
 
 public class CreatePlayerTask extends AsyncTask<IntSupplier, Void, Player> {

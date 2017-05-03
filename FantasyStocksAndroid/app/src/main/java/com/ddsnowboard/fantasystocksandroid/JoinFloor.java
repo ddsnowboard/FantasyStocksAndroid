@@ -21,6 +21,9 @@ import com.jameswk2.FantasyStocksAPI.User;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * This is the activity for joining a Floor
+ */
 public class JoinFloor extends AppCompatActivity {
     public static final String TAG = "JoinFloor";
     ArrayList<Floor> floors = new ArrayList<>();
@@ -36,12 +39,14 @@ public class JoinFloor extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(floors);
         recyclerView.setAdapter(adapter);
+
         GetAllFloorsTask task = new GetAllFloorsTask(this,
                 floors -> {
                     Arrays.stream(floors).forEach(JoinFloor.this.floors::add);
                     adapter.notifyDataSetChanged();
                 },
                 floor -> {
+                    // Only get floors that the user isn't a member of yet
                     User u = FantasyStocksAPI.getInstance().getUser();
                     Player[] usersPlayers = u.getPlayers();
                     return !Arrays.stream(usersPlayers).anyMatch(p -> p.getFloor().equals(floor));
@@ -95,8 +100,9 @@ public class JoinFloor extends AppCompatActivity {
                     sendBroadcast(broadcast);
                     finish();
                 });
-                /* Today, Will gives up hope that machines are deterministic and
-                instead begins worshipping Ba'al in hopes of finishing his app on time. */
+
+                // Fun fact: AsyncTasks don't actually run asynchronously of each other. Which 
+                // means one can block all the others. Unless you do this.
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, () -> floor.getId());
             });
         }

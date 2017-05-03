@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -19,9 +18,10 @@ import com.jameswk2.FantasyStocksAPI.Floor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
- * Created by ddsnowboard on 4/28/17.
+ * This takes care of all the complexity in the drawer that lets the user select what Floor they want to look at
  */
 
 public class FloorDrawerHandler {
@@ -35,6 +35,8 @@ public class FloorDrawerHandler {
     public FloorDrawerHandler(ListView drawer) {
         TextView joinFloorButton = new TextView(drawer.getContext());
         joinFloorButton.setText(R.string.joinFloor);
+
+        // The "Join Floor" button is dynamically added here
         ListView.LayoutParams lp = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT);
         joinFloorButton.setLayoutParams(lp);
         joinFloorButton.setGravity(Gravity.LEFT);
@@ -42,16 +44,13 @@ public class FloorDrawerHandler {
         joinFloorButton.setTextSize(TypedValue.COMPLEX_UNIT_PT, 11);
 
         joinFloorButton.setOnClickListener((view) -> {
-            // TODO: This needs to be changed to reflect the actual floors
-            // available. I could probably just put it in the actual class
-            // though and not do any work here. Appealing...
             Intent intent = new Intent(drawer.getContext(), JoinFloor.class);
             drawer.getContext().startActivity(intent);
-            // Do I have to finish the activity here or something? I'll worry about it later.
         });
 
         this.drawer = drawer;
-        // Don't tell anyone I did this...
+
+        // This gets the actual DrawerLayout in a semi-extensible way
         ViewParent possibleDrawer = drawer.getParent();
         while (!(possibleDrawer instanceof DrawerLayout))
             possibleDrawer = possibleDrawer.getParent();
@@ -61,21 +60,26 @@ public class FloorDrawerHandler {
         drawer.setAdapter(adapter);
 
         GetFloorsTask task = new GetFloorsTask(drawer.getContext(), floors -> {
-            Arrays.stream(floors).forEach(f -> this.floors.add(f));
+            Arrays.stream(floors).forEach(this.floors::add);
             adapter.notifyDataSetChanged();
-            // Have selected the first element in the list
+
+            // Select the first element in the list by default
             getViewByPosition(0, drawer).setBackgroundColor(0xFFDDDDDD);
             drawer.addFooterView(joinFloorButton);
         });
         task.execute();
+
         drawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int idx, long l) {
+                // Highlight the selected floor
                 for (int i = 0; i < adapter.getCount(); i++) {
                     getViewByPosition(i, drawer).setBackgroundColor(Color.WHITE);
                 }
                 getViewByPosition(idx, drawer).setBackgroundColor(0xFFDDDDDD);
+
                 masterView.closeDrawers();
+
                 Intent intent = new Intent(Utilities.LOAD_NEW_FLOOR);
                 intent.putExtra(Utilities.FLOOR_ID, floors.get(idx).getId());
                 drawer.getContext().sendBroadcast(intent);
@@ -103,7 +107,6 @@ public class FloorDrawerHandler {
     public View getViewByPosition(int pos, ListView listView) {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
         final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-        Log.d(TAG, String.format("first position is %d, last position is %d", firstListItemPosition, lastListItemPosition));
 
         if (pos < firstListItemPosition || pos > lastListItemPosition) {
             return listView.getAdapter().getView(pos, null, listView);

@@ -7,7 +7,8 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 
 /**
- * Created by ddsnowboard on 5/1/17.
+ * This is the simple Service that I stole from Google that checks whenever the FirebaseId gets changed
+ * and tells the server about it.
  */
 
 public class FirebaseIdService extends FirebaseInstanceIdService {

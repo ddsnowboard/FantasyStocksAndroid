@@ -10,6 +10,9 @@ import com.jameswk2.FantasyStocksAPI.Stock;
 
 import java.util.ArrayList;
 
+/**
+ * This activity is the first step of a making a Trade, after picking another User to send the Trade to.
+ */
 public class FirstLevelTrade extends TradeActivity {
     public static final String TAG = "FirstLevelTrade";
 

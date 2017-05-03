@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 4/27/17.
+ * This gets the floor specified by the id returned by the first floorIdGenerator 
  */
 
 public class GetFloorTask extends GetterTask<Floor> {

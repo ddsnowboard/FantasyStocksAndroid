@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
 /**
- * Created by ddsnowboard on 4/29/17.
+ * This, given a `Player`'s id, returns that Player
  */
 
 public class GetPlayerTask extends GetterTask<Player> {

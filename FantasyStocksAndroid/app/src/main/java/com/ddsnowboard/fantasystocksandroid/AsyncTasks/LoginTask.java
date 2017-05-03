@@ -7,7 +7,8 @@ import com.ddsnowboard.fantasystocksandroid.LoginActivity;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 
 /**
- * Created by ddsnowboard on 4/24/17.
+ * This logs in given a username and a password. It also notifies the server of the current Firebase
+ * Id, since the API documentation clearly says that sending the same Id twice is not an error.
  */
 
 public class LoginTask extends AsyncTask<String, Void, Boolean> {

@@ -3,7 +3,6 @@ package com.ddsnowboard.fantasystocksandroid;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -12,19 +11,16 @@ import com.jameswk2.FantasyStocksAPI.Player;
 import java.util.ArrayList;
 
 /**
- * Created by ddsnowboard on 4/25/17.
+ * This is the adapter for the Player portion of the main activity
  */
 
 public class PlayerRecyclerAdapter extends RecyclerView.Adapter<PlayerRecyclerAdapter.ViewHolder> {
     public static final String TAG = PlayerRecyclerAdapter.class.getSimpleName();
 
     private ArrayList<Player> players;
-    private final StockFragment.OnListFragmentInteractionListener mListener;
 
-    public PlayerRecyclerAdapter(ArrayList<Player> player, StockFragment.OnListFragmentInteractionListener listener) {
-        if (player != null)
-            this.players = player;
-        mListener = listener;
+    public PlayerRecyclerAdapter(ArrayList<Player> player) {
+        this.players = player;
     }
 
     @Override
@@ -38,17 +34,6 @@ public class PlayerRecyclerAdapter extends RecyclerView.Adapter<PlayerRecyclerAd
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.player = players.get(position);
         holder.bind(holder.player);
-
-        holder.parent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.player);
-                }
-            }
-        });
     }
 
     @Override

@@ -14,7 +14,8 @@ import java.util.function.IntSupplier;
 import java.util.stream.Stream;
 
 /**
- * Created by ddsnowboard on 4/28/17.
+ * This gets all the player on a Floor specified by the first floorIdSupplier, or the first floor
+ * that the logged-in User belongs to.
  */
 
 public class GetPlayersTask extends GetterTask<Player[]> {
@@ -24,8 +25,8 @@ public class GetPlayersTask extends GetterTask<Player[]> {
     }
 
     @Override
-    protected Player[] doInBackground(IntSupplier... floorIdGenerators) {
-        int floorId = floorIdGenerators[0].getAsInt();
+    protected Player[] doInBackground(IntSupplier... floorIdSuppliers) {
+        int floorId = floorIdSuppliers[0].getAsInt();
         if (floorId == -1) {
             // We should get the first floor that this guy owns
             User u = Utilities.login(ctx);

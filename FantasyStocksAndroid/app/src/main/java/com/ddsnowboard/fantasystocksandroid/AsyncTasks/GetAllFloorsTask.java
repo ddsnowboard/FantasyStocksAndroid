@@ -10,7 +10,8 @@ import java.util.function.IntSupplier;
 import java.util.function.Predicate;
 
 /**
- * Created by ddsnowboard on 5/1/17.
+ * This gets all the floors in the database and filters them according to filter. Note
+ * that the IntSuppliers don't function here. 
  */
 
 public class GetAllFloorsTask extends GetterTask<Floor[]> {

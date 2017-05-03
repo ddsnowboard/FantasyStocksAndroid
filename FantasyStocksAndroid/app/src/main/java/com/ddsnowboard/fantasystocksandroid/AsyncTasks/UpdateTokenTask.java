@@ -6,7 +6,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 
 /**
- * Created by ddsnowboard on 5/1/17.
+ * This updates the Firebase token on the server
  */
 
 public class UpdateTokenTask extends AsyncTask<Void, Void, Void> {

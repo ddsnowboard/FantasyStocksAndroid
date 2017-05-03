@@ -26,6 +26,10 @@ import com.jameswk2.FantasyStocksAPI.Trade;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * This is the activity that shows the individual trades to the user.
+ * From here they can accept or deny them
+ */
 public class ViewTradeActivity extends AppCompatActivity {
     public static final String TAG = "ViewTradeActivity";
     final ArrayList<String> senderStockSymbols = new ArrayList<>();
@@ -70,6 +74,9 @@ public class ViewTradeActivity extends AppCompatActivity {
             GetUserTask userTask = new GetUserTask(ViewTradeActivity.this, u -> {
                 header.setText("Trade from " + u.getUsername());
             });
+            // This is another instance where the way AsyncTasks are implemented means that you have to 
+            // use this thread pool executor. Android isn't a really big fan of the "Yo Dawg" school of 
+            // thread use.
             userTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, () -> t.getSenderPlayer().getUser().getId());
 
             Arrays.stream(t.getSenderStocks()).map(Stock::getSymbol).forEach(senderStockSymbols::add);
@@ -137,7 +144,6 @@ public class ViewTradeActivity extends AppCompatActivity {
         GetFloorTask task = new GetFloorTask(this, f -> {
             Intent intent = new Intent(Utilities.LOAD_NEW_FLOOR);
             intent.putExtra(Utilities.FLOOR_ID, f.getId());
-            Log.e(TAG, "We got here");
             sendBroadcast(intent);
         });
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, () -> FantasyStocksAPI.getInstance().getUser().getPlayers()[0].getFloor().getId());

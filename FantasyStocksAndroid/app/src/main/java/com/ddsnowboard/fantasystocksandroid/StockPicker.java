@@ -22,6 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This is the activity that lets the user select an individual stock in the 
+ * trading sequence
+ */
 public class StockPicker extends AppCompatActivity {
     public static final String TAG = StockPicker.class.getSimpleName();
 
@@ -44,14 +48,13 @@ public class StockPicker extends AppCompatActivity {
         adapter = new Adapter();
         adapter.setArray(allStocks);
         stockList.setAdapter(adapter);
+
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -79,10 +82,6 @@ public class StockPicker extends AppCompatActivity {
 
     class Adapter extends RecyclerView.Adapter<StockPicker.StockSearchHolder> {
         List<Stock> stocks = new ArrayList<>();
-
-        public Adapter() {
-
-        }
 
         @Override
         public StockSearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {

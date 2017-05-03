@@ -31,6 +31,10 @@ import static com.ddsnowboard.fantasystocksandroid.Utilities.GET_STOCK_FOR_TRADE
 import static com.ddsnowboard.fantasystocksandroid.Utilities.UNKNOWN_ID;
 
 
+/**
+ * This is the base class for the two Trade sequence activities. 
+ * This takes care of a bunch of the boilerplate stuff so they don't have to.
+ */
 public class TradeActivity extends AppCompatActivity {
     public static final String TAG = "TradeActivity";
 
@@ -56,6 +60,7 @@ public class TradeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(TradeActivity.this, StockPicker.class);
+                // If we haven't gotten the player id back from the server yet, tell the user to hang on
                 if (playerId == UNKNOWN_ID) {
                     Toast.makeText(TradeActivity.this, "Please wait...", Toast.LENGTH_LONG).show();
                     return;
@@ -73,6 +78,7 @@ public class TradeActivity extends AppCompatActivity {
         });
     }
 
+    // These methods are for the subclasses to use
     public void setText(CharSequence s) {
         text.setText(s);
     }
@@ -88,6 +94,8 @@ public class TradeActivity extends AppCompatActivity {
     public ArrayList<Stock> getStocks() {
         return adapter.getObjects();
     }
+
+
 
     class Adapter extends ArrayAdapter<Stock> {
         @LayoutRes
@@ -130,6 +138,9 @@ public class TradeActivity extends AppCompatActivity {
     }
 
     @Override
+    /**
+     * This receives the result from the StockPicker activity
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GET_STOCK_FOR_TRADE) {

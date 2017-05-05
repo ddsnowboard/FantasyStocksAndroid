@@ -28,7 +28,7 @@ public class TradeUploader extends AsyncTask<Utilities.TradeContainer, Void, Voi
                 .get();
         Stock[] recipientStocks = Arrays.stream(tc.getRecipientStockIds()).mapToObj(Stock::get).toArray(Stock[]::new);
         Stock[] senderStocks = Arrays.stream(tc.getSenderStockIds()).mapToObj(Stock::get).toArray(Stock[]::new);
-        Trade out = Trade.create(currentPlayer, recipient, senderStocks, recipientStocks, floor);
+        Trade.create(currentPlayer, recipient, senderStocks, recipientStocks, floor);
         return null;
     }
 }

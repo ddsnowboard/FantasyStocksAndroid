@@ -15,6 +15,8 @@ import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetStocksTask;
 import com.jameswk2.FantasyStocksAPI.Stock;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 /**
  * This is the stocks portion of the main activity
@@ -27,6 +29,11 @@ public class StockFragment extends Fragment {
     public ArrayList<Stock> stocks = new ArrayList<>();
     private BroadcastReceiver receiver;
 
+    private final Consumer<Stock[]> refillAdapter = stocks -> {
+            this.stocks.clear();
+            Arrays.stream(stocks).forEach(this.stocks::add);
+            adapter.notifyDataSetChanged();    };
+
     public StockFragment() {
     }
 
@@ -36,22 +43,13 @@ public class StockFragment extends Fragment {
         adapter = new StockViewAdapter(stocks);
 
         IntentFilter filter = new IntentFilter(Utilities.LOAD_NEW_FLOOR);
-        receiver = new FloorFragmentBroadcastReceiver<>(stocks -> {
-            this.stocks.clear();
-            for (Stock s : stocks)
-                this.stocks.add(s);
-            adapter.notifyDataSetChanged();
-        }, GetStocksTask.class);
+        receiver = new FloorFragmentBroadcastReceiver<>(refillAdapter, GetStocksTask.class);
 
         getContext().registerReceiver(receiver, filter);
 
         if (getArguments() != null) {
             int playerId = getArguments().getInt(Utilities.PLAYER_ID);
-            GetStocksTask task = new GetStocksTask(this.getContext(), stocks -> {
-                for (Stock s : stocks)
-                    this.stocks.add(s);
-                adapter.notifyDataSetChanged();
-            } );
+            GetStocksTask task = new GetStocksTask(this.getContext(), refillAdapter);
             task.execute((() -> playerId));
         } else
             throw new RuntimeException("Empty arguments");

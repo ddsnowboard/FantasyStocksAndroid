@@ -20,6 +20,12 @@ public class FloorFragmentBroadcastReceiver<T extends GetterTask<J>, J> extends 
     private final Consumer<J> callback;
     private final Constructor<T> constructor;
 
+    /**
+     * @param cb The Consumer that will be called on the AsyncTask specified by klass whenever this
+     *           receiver is called. It must take the same class that klass returns
+     * @param klass The class of the AsyncTask that will be called when the broadcast is received. It
+     *              must take the id of a Floor as its input argument
+     */
     public FloorFragmentBroadcastReceiver(Consumer<J> cb, Class<T> klass) {
         this.callback = cb;
         constructor = (Constructor<T>) klass.getConstructors()[0];

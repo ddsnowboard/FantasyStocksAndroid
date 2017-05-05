@@ -23,6 +23,7 @@ public class FirstLevelTrade extends TradeActivity {
         super.onCreate(savedInstanceState);
         Intent bundle = getIntent();
         int playerId = bundle.getIntExtra(Utilities.PLAYER_ID, Utilities.UNKNOWN_ID);
+
         setPlayer(playerId);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -37,8 +38,10 @@ public class FirstLevelTrade extends TradeActivity {
         });
 
         setText(R.string.loading);
+
+        // Get the player that we received in the Intent and put their name in the header field
         GetPlayerTask getPlayerTask = new GetPlayerTask(this,
-                player -> setText(String.format("What stocks do you want from %s?", player.getUser().getUsername())));
+                player -> setText(getString(R.string.other_stocks_prompt, player.getUser().getUsername())));
         getPlayerTask.execute(() -> playerId);
     }
 
@@ -49,6 +52,7 @@ public class FirstLevelTrade extends TradeActivity {
             if(resultCode == RESULT_OK) {
                 Intent out = new Intent();
                 out.putExtra(Utilities.TRADE_STOCKS_FROM_USER, stocks.stream().mapToInt(Stock::getId).toArray());
+                // This is what we got from the second level trade activity
                 out.putExtra(Utilities.TRADE_STOCKS_TO_GIVE_USER, data.getIntArrayExtra(Utilities.TRADE_STOCKS_TO_GIVE_USER));
                 setResult(RESULT_OK, out);
                 finish();

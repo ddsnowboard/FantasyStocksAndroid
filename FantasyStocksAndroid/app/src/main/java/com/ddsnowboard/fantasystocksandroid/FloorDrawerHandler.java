@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -18,7 +19,6 @@ import com.jameswk2.FantasyStocksAPI.Floor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * This takes care of all the complexity in the drawer that lets the user select what Floor they want to look at
@@ -33,10 +33,15 @@ public class FloorDrawerHandler {
     private ArrayList<Floor> floors = new ArrayList<>();
 
     public FloorDrawerHandler(ListView drawer) {
+        this.drawer = drawer;
+
+        /* The "Join Floor" button is dynamically added here
+        I couldn't do it in the xml because I had to use the special addFooterView
+        method, and that couldn't be accessed from xml. Note that this is actually
+        added to the ListView below, in the lambda of the GetFloorsTask.
+         */
         TextView joinFloorButton = new TextView(drawer.getContext());
         joinFloorButton.setText(R.string.joinFloor);
-
-        // The "Join Floor" button is dynamically added here
         ListView.LayoutParams lp = new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT);
         joinFloorButton.setLayoutParams(lp);
         joinFloorButton.setGravity(Gravity.LEFT);
@@ -47,8 +52,6 @@ public class FloorDrawerHandler {
             Intent intent = new Intent(drawer.getContext(), JoinFloor.class);
             drawer.getContext().startActivity(intent);
         });
-
-        this.drawer = drawer;
 
         // This gets the actual DrawerLayout in a semi-extensible way
         ViewParent possibleDrawer = drawer.getParent();
@@ -63,8 +66,6 @@ public class FloorDrawerHandler {
             Arrays.stream(floors).forEach(this.floors::add);
             adapter.notifyDataSetChanged();
 
-            // Select the first element in the list by default
-            getViewByPosition(0, drawer).setBackgroundColor(0xFFDDDDDD);
             drawer.addFooterView(joinFloorButton);
         });
         task.execute();
@@ -72,12 +73,6 @@ public class FloorDrawerHandler {
         drawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int idx, long l) {
-                // Highlight the selected floor
-                for (int i = 0; i < adapter.getCount(); i++) {
-                    getViewByPosition(i, drawer).setBackgroundColor(Color.WHITE);
-                }
-                getViewByPosition(idx, drawer).setBackgroundColor(0xFFDDDDDD);
-
                 masterView.closeDrawers();
 
                 Intent intent = new Intent(Utilities.LOAD_NEW_FLOOR);
@@ -95,24 +90,5 @@ public class FloorDrawerHandler {
             Arrays.stream(floors).forEach(FloorDrawerHandler.this.floors::add);
             adapter.notifyDataSetChanged();
         }, GetFloorsTask.class), filter);
-    }
-
-    /**
-     * Stolen from StackOverflow's VVB
-     *
-     * @param pos      the position of the view
-     * @param listView the ListView to look in
-     * @return the view at position `pos`
-     */
-    public View getViewByPosition(int pos, ListView listView) {
-        final int firstListItemPosition = listView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-
-        if (pos < firstListItemPosition || pos > lastListItemPosition) {
-            return listView.getAdapter().getView(pos, null, listView);
-        } else {
-            final int childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
-        }
     }
 }

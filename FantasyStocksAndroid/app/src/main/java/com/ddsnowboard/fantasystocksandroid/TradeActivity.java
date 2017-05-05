@@ -56,18 +56,15 @@ public class TradeActivity extends AppCompatActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         adapter = new Adapter(getApplicationContext());
         addButton = (TextView) findViewById(R.id.stockAdder);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(TradeActivity.this, StockPicker.class);
-                // If we haven't gotten the player id back from the server yet, tell the user to hang on
-                if (playerId == UNKNOWN_ID) {
-                    Toast.makeText(TradeActivity.this, "Please wait...", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                intent.putExtra(Utilities.PLAYER_ID, playerId);
-                startActivityForResult(intent, GET_STOCK_FOR_TRADE);
+        addButton.setOnClickListener(view -> {
+            Intent intent = new Intent(TradeActivity.this, StockPicker.class);
+            // If we haven't gotten the player id back from the server yet, tell the user to hang on
+            if (playerId == UNKNOWN_ID) {
+                Toast.makeText(TradeActivity.this, "Please wait...", Toast.LENGTH_LONG).show();
+                return;
             }
+            intent.putExtra(Utilities.PLAYER_ID, playerId);
+            startActivityForResult(intent, GET_STOCK_FOR_TRADE);
         });
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -79,18 +76,34 @@ public class TradeActivity extends AppCompatActivity {
     }
 
     // These methods are for the subclasses to use
+
+    /**
+     * Set the text in the header of the activity
+     * @param s the text to put in the header
+     */
     public void setText(CharSequence s) {
         text.setText(s);
     }
 
+    /**
+     * Set the text in the header of the activity
+     * @param res the resource of the desired text
+     */
     public void setText(@StringRes int res) {
         setText(getString(res));
     }
 
+    /**
+     * Add a stock to the list
+     * @param s the stock to add
+     */
     public void addStock(Stock s) {
         adapter.add(s);
     }
 
+    /**
+     * @return all the stocks currently shown in the list
+     */
     public ArrayList<Stock> getStocks() {
         return adapter.getObjects();
     }

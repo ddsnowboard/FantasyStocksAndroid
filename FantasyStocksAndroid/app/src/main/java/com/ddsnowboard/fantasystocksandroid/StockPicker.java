@@ -38,9 +38,17 @@ public class StockPicker extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_picker);
+
         int playerId = getIntent().getIntExtra(Utilities.PLAYER_ID, Utilities.UNKNOWN_ID);
         if (playerId == Utilities.UNKNOWN_ID)
              throw new RuntimeException("You forgot to give me a playerId");
+
+        GetterTask<Stock[]> task = new GetPlayersStocks(this,
+                stocks -> {
+                    Arrays.stream(stocks).forEach(allStocks::add);
+                    adapter.notifyDataSetChanged();
+                });
+        task.execute(() -> playerId);
 
         stockList = (RecyclerView) findViewById(R.id.searchList);
         stockList.setLayoutManager(new LinearLayoutManager(this));
@@ -71,13 +79,6 @@ public class StockPicker extends AppCompatActivity {
                 }
             }
         });
-
-        GetterTask<Stock[]> task = new GetPlayersStocks(this,
-                stocks -> {
-                    Arrays.stream(stocks).forEach(allStocks::add);
-                    adapter.notifyDataSetChanged();
-                });
-        task.execute(() -> playerId);
     }
 
     class Adapter extends RecyclerView.Adapter<StockPicker.StockSearchHolder> {
@@ -100,6 +101,11 @@ public class StockPicker extends AppCompatActivity {
             return stocks.size();
         }
 
+        /**
+         * Set the backing list of this adapter to be the given list
+         * @param newArray a List of {@link Stock}s that will be set as the backing
+         *                 list of this adapter
+         */
         public void setArray(List<Stock> newArray) {
             this.stocks = newArray;
             notifyDataSetChanged();
@@ -121,14 +127,11 @@ public class StockPicker extends AppCompatActivity {
         public void bind(Stock s) {
             nameView.setText(s.getSymbol());
             priceView.setText(String.valueOf(s.getChange()));
-            parent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent output = new Intent();
-                    output.putExtra(Utilities.STOCK_ID, s.getId());
-                    setResult(RESULT_OK, output);
-                    finish();
-                }
+            parent.setOnClickListener(view -> {
+                Intent output = new Intent();
+                output.putExtra(Utilities.STOCK_ID, s.getId());
+                setResult(RESULT_OK, output);
+                finish();
             });
         }
     }

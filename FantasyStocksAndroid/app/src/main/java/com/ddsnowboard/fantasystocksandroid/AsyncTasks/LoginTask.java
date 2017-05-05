@@ -14,6 +14,10 @@ import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 public class LoginTask extends AsyncTask<String, Void, Boolean> {
     private LoginActivity caller;
 
+    /**
+     * @param activity the LoginActivity where we can find the finishLogin method that
+     *                 we need to call after executing
+     */
     public LoginTask(LoginActivity activity) {
         super();
         caller = activity;

@@ -69,13 +69,10 @@ public class TradesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(adapter);
-        }
+        Context context = view.getContext();
+        RecyclerView recyclerView = (RecyclerView) view;
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(adapter);
         return view;
     }
 
@@ -120,13 +117,14 @@ public class TradesFragment extends Fragment {
         }
 
         public void bind(Trade t) {
-            GetUserTask task = new GetUserTask(parent.getContext(), user -> titleView.setText("Trade from " + user.getUsername()));
+            GetUserTask task = new GetUserTask(parent.getContext(), user -> titleView.setText(getString(R.string.trade_from_text, user.getUsername())));
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, () -> t.getSenderPlayer().getUser().getId());
+
             leftListArray.clear();
             leftListArray.add("Your stocks:");
             Arrays.stream(t.getRecipientStocks()).map(Stock::getSymbol).forEach(leftListArray::add);
             // Fun fact: if you tell a ListView to take as much vertical space as wants, it
-            // will show one item.
+            // will show exactly one item.
             leftList.setText(leftListArray.stream().collect(Collectors.joining("\n")));
 
             rightListArray.clear();
@@ -134,6 +132,7 @@ public class TradesFragment extends Fragment {
             Arrays.stream(t.getSenderStocks()).map(Stock::getSymbol).forEach(rightListArray::add);
             rightList.setText(rightListArray.stream().collect(Collectors.joining("\n")));
 
+            // If you click on a trade, it takes you to a trade activity for it
             parent.setOnClickListener(view -> {
                 Intent intent = new Intent(TradesFragment.this.getContext(), ViewTradeActivity.class);
                 intent.putExtra(Utilities.TRADE_ID, t.getId());

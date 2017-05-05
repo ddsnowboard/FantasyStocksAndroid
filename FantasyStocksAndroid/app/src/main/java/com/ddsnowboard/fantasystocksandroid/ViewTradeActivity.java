@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetUserTask;
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.RejectTradeTask;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 import com.jameswk2.FantasyStocksAPI.Stock;
-import com.jameswk2.FantasyStocksAPI.Trade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +70,7 @@ public class ViewTradeActivity extends AppCompatActivity {
         bar.show();
         GetTradeTask task = new GetTradeTask(this, t -> {
             GetUserTask userTask = new GetUserTask(ViewTradeActivity.this, u -> {
-                header.setText("Trade from " + u.getUsername());
+                header.setText(String.format(getText(R.string.trade_from_text).toString(), u.getUsername()));
             });
             // This is another instance where the way AsyncTasks are implemented means that you have to 
             // use this thread pool executor. Android isn't a really big fan of the "Yo Dawg" school of 
@@ -126,6 +124,11 @@ public class ViewTradeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Tells the server that we have accepted a trade, the trade specified by the tradeId field
+     * of this object.
+     * @param view does nothing
+     */
     public void acceptTrade(View view) {
         AcceptTradeTask task = new AcceptTradeTask();
         task.execute(() -> tradeId);
@@ -133,6 +136,11 @@ public class ViewTradeActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Tells the server that we have rejected a trade, the trade specified by the tradeId field
+     * of this object.
+     * @param view does nothing
+     */
     public void rejectTrade(View view) {
         RejectTradeTask task = new RejectTradeTask();
         task.execute(() -> tradeId);
@@ -140,6 +148,9 @@ public class ViewTradeActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Send a broadcast telling the rest of the app to get new data
+     */
     private void sendRefreshBroadcast() {
         GetFloorTask task = new GetFloorTask(this, f -> {
             Intent intent = new Intent(Utilities.LOAD_NEW_FLOOR);

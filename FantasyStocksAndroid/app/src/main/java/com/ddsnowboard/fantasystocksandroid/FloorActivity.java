@@ -34,9 +34,9 @@ public class FloorActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_floor);
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.preferences), 0);
 
         // Check if a user is logged in
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.preferences), 0);
         if (!prefs.contains(getString(R.string.username))) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -68,7 +68,7 @@ public class FloorActivity extends FragmentActivity {
         private static final int PLAYERS_PAGE = 1;
         private static final int TRADES_PAGE = 2;
 
-        int currentPlayerId;
+        private int currentPlayerId;
 
         public PagerAdapter(FragmentManager fm, int startingPlayerId) {
             super(fm);
@@ -94,28 +94,20 @@ public class FloorActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            if (position == STOCKS_PAGE) {
-                StockFragment stocksFragment = new StockFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt(Utilities.PLAYER_ID, currentPlayerId);
-                stocksFragment.setArguments(bundle);
-                return stocksFragment;
-            } else if (position == PLAYERS_PAGE) {
-                PlayerFragment fragment = new PlayerFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt(Utilities.PLAYER_ID, currentPlayerId);
-                fragment.setArguments(bundle);
-                return fragment;
-            }
-            else if(position == TRADES_PAGE) {
-                TradesFragment fragment = new TradesFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt(Utilities.PLAYER_ID, currentPlayerId);
-                fragment.setArguments(bundle);
-                return fragment;
-            } else {
+            Fragment retval;
+            if (position == STOCKS_PAGE)
+                retval = new StockFragment();
+            else if (position == PLAYERS_PAGE)
+                retval = new PlayerFragment();
+            else if(position == TRADES_PAGE)
+                retval = new TradesFragment();
+            else
                 throw new RuntimeException("Something strange happened");
-            }
+
+            Bundle bundle = new Bundle();
+            bundle.putInt(Utilities.PLAYER_ID, currentPlayerId);
+            retval.setArguments(bundle);
+            return retval;
         }
 
         @Override
@@ -124,7 +116,7 @@ public class FloorActivity extends FragmentActivity {
         }
     }
 
-    /*
+    /**
      * This class is just a nice way to wrap up the functionality for
      * starting a trade. You create of of these and pass it as the OnClickListener to whatever 
      * button starts a Trade.
@@ -144,7 +136,7 @@ public class FloorActivity extends FragmentActivity {
         }
     }
 
-    /*
+    /**
      * This details what to do when a floor reload is called
      */
     class FloorFoundListener extends BroadcastReceiver {
@@ -152,7 +144,8 @@ public class FloorActivity extends FragmentActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Utilities.FOUND_STARTING_FLOOR) || intent.getAction().equals(Utilities.LOAD_NEW_FLOOR)) {
+            String action = intent.getAction();
+            if (action.equals(Utilities.FOUND_STARTING_FLOOR) || action.equals(Utilities.LOAD_NEW_FLOOR)) {
                 int floorId = intent.getIntExtra(Utilities.FLOOR_ID, Utilities.UNKNOWN_ID);
                 if (floorId == Utilities.UNKNOWN_ID)
                     throw new RuntimeException("Something bad happened");

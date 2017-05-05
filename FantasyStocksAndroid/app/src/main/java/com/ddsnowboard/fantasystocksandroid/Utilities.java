@@ -11,6 +11,7 @@ import com.jameswk2.FantasyStocksAPI.User;
  */
 
 public class Utilities {
+    // This stuff is used to send around numbers and strings between activities without making typos
     public static final int UNKNOWN_ID = -1;
 
     public static final String FLOOR_ID = "flooridnumber";
@@ -34,6 +35,12 @@ public class Utilities {
     public static final int RESULT_NOT_READY = 5;
 
 
+    /**
+     * Logs in the current user. Reads the username and password from the SharedPreferences and gets
+     * a token from the server
+     * @param ctx the context where the function can get the SharedPreferences
+     * @return the logged in {@link User}
+     */
     public static User login(Context ctx) {
         FantasyStocksAPI api = FantasyStocksAPI.getInstance();
         SharedPreferences prefs = ctx.getSharedPreferences(ctx.getString(R.string.preferences), 0);
@@ -43,6 +50,9 @@ public class Utilities {
         return api.getUser();
     }
 
+    /**
+     * This class is used to create a whole trade and pass it as one object to an AsyncTask
+     */
     public static class TradeContainer {
         private int recipientPlayerId;
         private int[] recipientStockIds;

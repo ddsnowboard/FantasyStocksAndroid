@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ddsnowboard.fantasystocksandroid.AsyncTasks.CreatePlayerTask;
-import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetAllFloorsTask;
+import com.ddsnowboard.fantasystocksandroid.AsyncTasks.GetFilteredFloorsTask;
 import com.jameswk2.FantasyStocksAPI.FantasyStocksAPI;
 import com.jameswk2.FantasyStocksAPI.Floor;
 import com.jameswk2.FantasyStocksAPI.Player;
@@ -40,7 +40,7 @@ public class JoinFloor extends AppCompatActivity {
         adapter = new Adapter(floors);
         recyclerView.setAdapter(adapter);
 
-        GetAllFloorsTask task = new GetAllFloorsTask(this,
+        GetFilteredFloorsTask task = new GetFilteredFloorsTask(this,
                 floors -> {
                     Arrays.stream(floors).forEach(JoinFloor.this.floors::add);
                     adapter.notifyDataSetChanged();
@@ -49,7 +49,7 @@ public class JoinFloor extends AppCompatActivity {
                     // Only get floors that the user isn't a member of yet
                     User u = FantasyStocksAPI.getInstance().getUser();
                     Player[] usersPlayers = u.getPlayers();
-                    return !Arrays.stream(usersPlayers).anyMatch(p -> p.getFloor().equals(floor));
+                    return Arrays.stream(usersPlayers).noneMatch(p -> p.getFloor().equals(floor));
                 });
         task.execute();
     }
@@ -93,6 +93,8 @@ public class JoinFloor extends AppCompatActivity {
         public void bind(Floor floor) {
             name.setText(floor.getName());
             parent.setOnClickListener(view -> {
+                /* Joining a floor is the same as creating a player, so that's what the join floor
+                button does */
                 CreatePlayerTask task = new CreatePlayerTask(p -> {
                     Intent broadcast = new Intent();
                     broadcast.setAction(Utilities.LOAD_NEW_FLOOR);
@@ -101,8 +103,10 @@ public class JoinFloor extends AppCompatActivity {
                     finish();
                 });
 
-                // Fun fact: AsyncTasks don't actually run asynchronously of each other. Which 
-                // means one can block all the others. Unless you do this.
+                /* Fun fact: AsyncTasks don't actually run asynchronously of each other, they only
+                run asynchronously of the UI thread. Which means one can block all the others.
+                 Unless you do this.
+                 */
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, () -> floor.getId());
             });
         }

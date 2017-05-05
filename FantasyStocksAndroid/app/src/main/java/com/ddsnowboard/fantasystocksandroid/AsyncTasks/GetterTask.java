@@ -18,6 +18,10 @@ public abstract class GetterTask<T> extends AsyncTask<IntSupplier, Void, T> {
     Context ctx;
     Consumer<T> consumer;
 
+    /**
+     * @param ctx the context
+     * @param consumer the consumer, which is used to replace the need to override onPostExecute
+     */
     public GetterTask(Context ctx, Consumer<T> consumer) {
         this.consumer = consumer;
         this.ctx = ctx;

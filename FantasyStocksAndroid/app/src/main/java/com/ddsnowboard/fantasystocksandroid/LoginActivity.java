@@ -45,12 +45,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This reads the text boxes and tries to log in the User with a {@link LoginActivity}
+     * @param v the view (not used, but must be here to use onClick in the xml
+     */
     public void login(View v) {
         LoginTask task = new LoginTask(this);
         task.execute(username.getText().toString(), password.getText().toString());
         bar.show();
     }
 
+    /**
+     * Once the {@link LoginActivity} called above finishes, it calls this method.
+     * @param result True if the login worked, false otherwise
+     */
     public void finishLogin(boolean result) {
         bar.hide();
         if(result) {
@@ -58,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(getString(R.string.username), username.getText().toString());
             editor.putString(getString(R.string.password), password.getText().toString());
-            editor.commit();
+            editor.apply();
             Intent intent = new Intent(this, FloorActivity.class);
             startActivity(intent);
             finish();
@@ -68,6 +76,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * The method that registers a user. It just sends their credentials to the server, and then
+     * logs them in.
+     * @param v the view (not used, but must be here to use onClick in the xml
+     */
     public void register(View v) {
         FantasyStocksAPI.getInstance().register(username.getText().toString(), password.getText().toString());
         FantasyStocksAPI.getInstance().login(username.getText().toString(), password.getText().toString());

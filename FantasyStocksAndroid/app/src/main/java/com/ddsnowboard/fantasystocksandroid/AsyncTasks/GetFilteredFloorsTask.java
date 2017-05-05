@@ -14,13 +14,15 @@ import java.util.function.Predicate;
  * that the IntSuppliers don't function here. 
  */
 
-public class GetAllFloorsTask extends GetterTask<Floor[]> {
+public class GetFilteredFloorsTask extends GetterTask<Floor[]> {
     Predicate<Floor> filter;
-    public GetAllFloorsTask(Context ctx, Consumer<Floor[]> consumer) {
-        this(ctx, consumer, f -> true);
-    }
 
-    public GetAllFloorsTask(Context ctx, Consumer<Floor[]> consumer, Predicate<Floor> filter) {
+    /**
+     * @param ctx The context; see the super method
+     * @param consumer The consumer; see the super method
+     * @param filter the filter that is used to select the floors
+     */
+    public GetFilteredFloorsTask(Context ctx, Consumer<Floor[]> consumer, Predicate<Floor> filter) {
         super(ctx, consumer);
         this.filter = filter;
     }

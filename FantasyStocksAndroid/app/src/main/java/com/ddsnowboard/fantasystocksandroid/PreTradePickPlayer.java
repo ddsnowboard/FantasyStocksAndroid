@@ -45,11 +45,11 @@ public class PreTradePickPlayer extends AppCompatActivity {
 
         Intent intent = getIntent();
         int floorId = intent.getIntExtra(FLOOR_ID, UNKNOWN_ID);
-        FantasyStocksAPI api = FantasyStocksAPI.getInstance();
         Adapter adapter = new Adapter(currentlyShownPlayers);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this));
 
+        FantasyStocksAPI api = FantasyStocksAPI.getInstance();
         GetPlayersTask task = new GetPlayersTask(this,
                 players -> {
                     // 2 = 1 floor + 1 user (the only one)
@@ -67,10 +67,10 @@ public class PreTradePickPlayer extends AppCompatActivity {
         task.execute(() -> floorId);
 
 
+        // Implements searching
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
@@ -106,17 +106,17 @@ public class PreTradePickPlayer extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.bind(currentlyShownPlayers.get(position));
+            holder.bind(players.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return currentlyShownPlayers.size();
+            return players.size();
         }
     }
 
     @Override
-    /* This calls the first level, which calls the second level, which returns a reult to the first level, which 
+    /* This calls the first level, which calls the second level, which returns a result to the first level, which
      * returns its result right here.  */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

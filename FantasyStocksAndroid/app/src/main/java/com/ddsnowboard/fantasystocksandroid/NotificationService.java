@@ -23,7 +23,7 @@ public class NotificationService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        Log.d(TAG, String.format("The data is %s", remoteMessage.getData().toString()));
+        // Send a broadcast to load new floors, since this will reload everything and get the new data
         Intent intent = new Intent(Utilities.LOAD_NEW_FLOOR);
         intent.putExtra(Utilities.FLOOR_ID, FantasyStocksAPI.getInstance().getUser().getPlayers()[0].getFloor().getId());
         sendBroadcast(intent);
@@ -32,6 +32,7 @@ public class NotificationService extends FirebaseMessagingService {
         builder.setContentText(remoteMessage.getNotification().getTitle());
         builder.setSmallIcon(R.drawable.letter_f);
 
+        // Also, put a notification in the notification bar
         manager.notify(0, builder.build());
     }
 }

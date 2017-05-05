@@ -29,8 +29,6 @@ public class PlayerFragment extends Fragment {
     ArrayList<Player> players = new ArrayList<>();
     PlayerRecyclerAdapter adapter;
 
-    private BroadcastReceiver receiver;
-
     // This is what happens when we get a broadcast to reload a floor
     private final Consumer<Player[]> receiverCallback = players -> {
         this.players.clear();
@@ -44,13 +42,14 @@ public class PlayerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Register receiver for reload event
         IntentFilter filter = new IntentFilter(Utilities.LOAD_NEW_FLOOR);
-        receiver = new FloorFragmentBroadcastReceiver<>(receiverCallback, GetPlayersTask.class);
-
+        BroadcastReceiver receiver = new FloorFragmentBroadcastReceiver<>(receiverCallback, GetPlayersTask.class);
         getContext().registerReceiver(receiver, filter);
         adapter = new PlayerRecyclerAdapter(players);
 
         if (getArguments() != null) {
+            // Load in the proper other players based on the current player's data
             int playerId = getArguments().getInt(Utilities.PLAYER_ID);
             GetPlayersTask task = new GetPlayersTask(getContext(), receiverCallback);
             if (playerId != Utilities.UNKNOWN_ID)
